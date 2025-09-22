@@ -1,40 +1,26 @@
 {
-  "name": "cashlens",
+  "name": "cashlens-web",
+  "version": "0.1.0",
   "private": true,
-  "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.1",
-    "@mui/material": "^7.3.2",
-    "@tanstack/react-query": "^5.89.0",
-    "axios": "^1.12.2",
-    "dayjs": "^1.11.18",
-    "echarts": "^5.6.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.14.1",
+    "zustand": "^4.3.6",
+    "dayjs": "^1.11.10",
+    "echarts": "^5.4.3",
     "echarts-for-react": "^3.0.2",
-    "file-saver": "^2.0.5",
-    "papaparse": "^5.5.3",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1",
-    "react-router-dom": "^7.9.1",
     "xlsx": "^0.18.5",
-    "zustand": "^5.0.8"
+    "papaparse": "^5.4.1"
   },
   "devDependencies": {
-    "@eslint/js": "^9.33.0",
-    "@types/react": "^19.1.10",
-    "@types/react-dom": "^19.1.7",
-    "@vitejs/plugin-react": "^5.0.0",
-    "eslint": "^9.33.0",
-    "eslint-plugin-react-hooks": "^5.2.0",
-    "eslint-plugin-react-refresh": "^0.4.20",
-    "globals": "^16.3.0",
-    "vite": "^7.1.2"
+    "@vitejs/plugin-react": "^4.0.0",
+    "vite": "^5.0.0"
   }
 }
