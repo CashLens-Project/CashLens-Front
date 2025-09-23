@@ -7,6 +7,7 @@ export default function Topbar() {
   const setGoal = useGoalsStore((s) => s.setGoal);
 
   return (
+    //TopBar da Pagina Principal
     <header className="topbar">
       <div className="title">Visão Geral</div>
       <div className="controls">
