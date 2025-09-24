@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { provider } from '../../data/providers/index.js';
 import { useFiltersStore, useGoalsStore } from '../../app/store.js';
+import Filter from '../../components/ui/Filter.jsx';
 import Card from '../../components/ui/Card.jsx';
 import LineChart from '../../components/charts/LineChart.jsx';
 import { fmtBRL } from '../../utils/format.js';
@@ -30,6 +31,10 @@ export default function DashboardView() {
 
   return (
     <div className="stack">
+      <div className="card" style={{ marginBottom: '1rem' }}>
+        <Filter />
+      </div>
+
       <div className="grid kpis">
         <Card title="Receita Líquida" value={fmtBRL(dre.receitaLiquida)} />
         <Card title="COGS" value={fmtBRL(dre.cogs)} />
