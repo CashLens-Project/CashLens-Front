@@ -5,9 +5,9 @@
 
 .sidebar {
   width: 220px;
-  background: #0d1623;
+  background: var(--panel);
   padding: 16px;
-  border-right: 1px solid #1f2937;
+  border-right: 1px solid #e5e7eb;
   display: flex;
   flex-direction: column;
 }
@@ -15,6 +15,8 @@
 .sidebar .logo {
   font-weight: 700;
   margin-bottom: 16px;
+  color: var(--accent);
+  font-size: 1.25rem;
 }
 
 .navlink {
@@ -26,7 +28,7 @@
 
 .navlink:hover,
 .navlink.active {
-  color: var(--text);
+  color: var(--accent);
 }
 
 .app-main {
@@ -40,7 +42,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 12px 20px;
-  border-bottom: 1px solid #1f2937;
+  border-bottom: 1px solid #e5e7eb;
+  background: var(--panel);
 }
 
 .topbar .title {
@@ -56,8 +59,8 @@
 .topbar input {
   margin-left: 6px;
   padding: 6px 8px;
-  background: #0d1623;
-  border: 1px solid #1f2937;
+  background: var(--panel);
+  border: 1px solid #e5e7eb;
   color: var(--text);
   border-radius: 6px;
 }
@@ -82,7 +85,7 @@
   background: var(--panel);
   padding: 14px;
   border-radius: 12px;
-  border: 1px solid #1f2937;
+  border: 1px solid #e5e7eb;
 }
 
 .card-title {
@@ -105,13 +108,14 @@
   background: var(--panel);
   padding: 14px;
   border-radius: 12px;
-  border: 1px solid #1f2937;
+  border: 1px solid #e5e7eb;
 }
 
 .progress {
   position: relative;
   height: 8px;
-  background: #0d1623;
+  background: #f3f4f6;
+  overflow: hidden;
   border-radius: 8px;
   margin: 6px 0 6px;
 }
