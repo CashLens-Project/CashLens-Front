@@ -8,6 +8,10 @@ import DREViewEnhanced from '../features/dre/DREViewEnhanced';
 export const router = createBrowserRouter([
   {
     path: '/',
+    element: <HomeView />,
+  },
+  {
+    path: '/dashboard',
     element: <AppLayout />,
     children: [
       { index: true, element: <DashboardView /> },
