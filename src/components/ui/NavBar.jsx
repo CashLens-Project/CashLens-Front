@@ -13,6 +13,9 @@ export default function NavBar() {
             <NavLink to="/dashboard" className="navlink">
               DashBoard
             </NavLink>
+            <NavLink to="/dre" className="navlink">
+              DRE
+            </NavLink>
           </div>
         </div>
       </div>
