@@ -5,6 +5,7 @@ import Filter from '../../components/ui/Filter.jsx';
 import Card from '../../components/ui/Card.jsx';
 import LineChart from '../../components/charts/LineChart.jsx';
 import { fmtBRL } from '../../utils/format.js';
+import './DashboardView.css';
 
 export default function DashboardView() {
   const month = useFiltersStore((s) => s.month);

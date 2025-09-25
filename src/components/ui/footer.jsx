@@ -1,6 +1,3 @@
-// components/ui/Footer.jsx
-import React from 'react';
-
 const Footer = () => {
   return (
     <footer id="contact" className="footer">
