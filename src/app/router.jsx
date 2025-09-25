@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import HomeView from '../features/home/HomeView.jsx';
 import AppLayout from '../layouts/AppLayout.jsx';
 import DashboardView from '../features/dashboard/DashboardView.jsx';
+import DREViewEnhanced from '../features/dre/DREViewEnhanced';
 
 export const router = createBrowserRouter([
   {
@@ -12,7 +13,11 @@ export const router = createBrowserRouter([
     path: '/dashboard',
     element: <AppLayout />,
     children: [
-      { index: true, element: <DashboardView /> },
+      { index: true, element: <DashboardView /> }, // Definindo a view para a rota /dashboard
     ],
+  },
+  {
+    path: '/dre', // Rota separada para /dre
+    element: <DREViewEnhanced />, // Elemento para /dre
   },
 ]);
