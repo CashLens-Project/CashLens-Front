@@ -13,11 +13,14 @@ export const router = createBrowserRouter([
     path: '/dashboard',
     element: <AppLayout />,
     children: [
-      { index: true, element: <DashboardView /> }, // Definindo a view para a rota /dashboard
+      { index: true, element: <DashboardView /> }, 
     ],
   },
   {
-    path: '/dre', // Rota separada para /dre
-    element: <DREViewEnhanced />, // Elemento para /dre
+    path: '/dre',
+    element: <AppLayout/>, 
+    children: [
+      { index: true, element: <DREViewEnhanced /> }, 
+    ],
   },
 ]);
