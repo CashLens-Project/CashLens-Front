@@ -264,28 +264,6 @@ a {
   }
 }
 
-/* Form styles */
-.controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  align-items: center;
-}
-.controls label {
-  color: var(--muted);
-  font-size: 0.9rem;
-  display: flex;
-  align-items: center;
-}
-.controls input {
-  margin-left: 0.5rem;
-  padding: 0.4rem 0.6rem;
-  background: var(--panel);
-  border: 1px solid #e5e7eb;
-  color: var(--text);
-  border-radius: 6px;
-}
-
 /* Icon Home styles */
 .icon-blue {
   background: #eff6ff;

@@ -1,3 +1,11 @@
+:root {
+  --panel: #ffffff;
+  --muted: #6b7280;
+  --success: #22c55e;
+  --text-primary: #111827;
+  --border-color: #e5e7eb;
+}
+
 .app-content {
   padding: 20px;
 }
@@ -6,6 +14,74 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+.filter-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.filter-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  align-items: flex-end;
+  width: 100%;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.control-group label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.control-group input[type="month"],
+.input-with-prefix {
+  background-color: #f9fafb;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  height: 40px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.control-group input[type="month"]:focus,
+.input-with-prefix:focus-within {
+  border-color: var(--success);
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+}
+
+.control-group input[type="month"] {
+  padding: 0 12px;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.input-with-prefix {
+  display: flex;
+  align-items: center;
+}
+
+.input-with-prefix span {
+  padding-left: 12px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.input-with-prefix input {
+  border: none;
+  background: transparent;
+  outline: none;
+  padding: 0 12px 0 8px;
+  height: 100%;
+  width: 100%;
+  font-size: 14px;
+  color: var(--text-primary);
 }
 
 .grid.kpis {
@@ -18,7 +94,9 @@
   background: var(--panel);
   padding: 14px;
   border-radius: 12px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
 }
 
 .card-title {
@@ -31,26 +109,25 @@
 .card-value {
   font-size: 20px;
   margin: 6px 0 4px;
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
-.card-body {
-  margin-top: 8px;
-}
-
-.panel {
-  background: var(--panel);
-  padding: 14px;
-  border-radius: 12px;
-  border: 1px solid #e5e7eb;
+.card-body-goal {
+  margin-top: auto;
+  padding-top: 8px;
 }
 
 .progress {
   position: relative;
-  height: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  height: 22px;
   background: #f3f4f6;
-  overflow: hidden;
   border-radius: 8px;
-  margin: 6px 0 6px;
+  overflow: hidden;
 }
 
 .progress .bar {
@@ -60,6 +137,33 @@
   bottom: 0;
   background: var(--success);
   border-radius: 8px;
+  transition: width 0.4s ease-in-out;
+}
+
+.progress-label,
+.progress-percentage {
+  position: relative;
+  z-index: 2;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.progress-label.on-bar,
+.progress-percentage.on-bar {
+  color: #fff;
+}
+
+.panel {
+  background: var(--panel);
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+}
+
+.panel h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
 }
 
 .muted {

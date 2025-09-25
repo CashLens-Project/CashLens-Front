@@ -28,11 +28,97 @@ export default function DashboardView() {
     fetchData();
   }, [month]);
 
-  const progress = goal ? Math.min(1, (dre.resultado || 0) / goal) : 0;
+  const progress = (goal > 0 && dre.resultado > 0)
+    ? Math.min(1, dre.resultado / goal)
+    : 0;
+  const percentageText = `${(progress * 100).toFixed(0)}%`;
+  const isGoalLabelOnBar = progress > 0.25;
+  const isPercentageLabelOnBar = progress >= 1;
+
+  const insights = [];
+  const { resultado, receitaLiquida, despesas, cogs } = dre;
+
+  // Insight 1: Análise do Resultado vs. Meta
+  if (goal > 0) {
+    if (resultado >= goal) {
+      insights.push({
+        type: 'positive',
+        icon: '📈',
+        text: (
+          <>
+            <strong>Meta Atingida!</strong> O resultado de{' '}
+            <strong>{fmtBRL(resultado)}</strong> superou a meta de {fmtBRL(goal)}.
+          </>
+        ),
+      });
+    } else if (resultado > 0) {
+      insights.push({
+        type: 'info',
+        icon: '💡',
+        text: (
+          <>
+            O resultado de <strong>{fmtBRL(resultado)}</strong> está a{' '}
+            <strong>{fmtBRL(goal - resultado)}</strong> de atingir a meta.
+          </>
+        ),
+      });
+    } else {
+      insights.push({
+        type: 'negative',
+        icon: '📉',
+        text: (
+          <>
+            O resultado foi <strong>negativo</strong> em{' '}
+            <strong>{fmtBRL(resultado)}</strong>, ficando longe da meta de{' '}
+            {fmtBRL(goal)}.
+          </>
+        ),
+      });
+    }
+  }
+
+  // Insight 2: Análise das Despesas
+  if (despesas > receitaLiquida && resultado < 0) {
+    insights.push({
+      type: 'negative',
+      icon: '📉',
+      text: (
+        <>
+          As <strong>despesas</strong> de <strong>{fmtBRL(despesas)}</strong>{' '}
+          foram o principal fator para o resultado negativo.
+        </>
+      ),
+    });
+  }
+
+  // Insight 3: Análise da Margem de Contribuição
+  const margem = receitaLiquida - cogs;
+  if (receitaLiquida > 0 && margem < receitaLiquida * 0.4) {
+    insights.push({
+      type: 'info',
+      icon: '💡',
+      text: (
+        <>
+          A <strong>margem de contribuição</strong> está em{' '}
+          <strong>{fmtBRL(margem)}</strong>. Analise se os custos (COGS) estão
+          adequados.
+        </>
+      ),
+    });
+  }
+  
+  // Mensagem padrão se nenhum insight for gerado
+  if (insights.length === 0 && dre.receitaLiquida > 0) {
+    insights.push({
+      type: 'info',
+      icon: '💡',
+      text: 'Nenhuma observação automática gerada para este período.',
+    });
+  }
 
   return (
     <div className="stack">
-      <div className="card" style={{ marginBottom: '1rem' }}>
+      <div className="filter-container">
         <Filter />
       </div>
 
@@ -40,11 +126,23 @@ export default function DashboardView() {
         <Card title="Receita Líquida" value={fmtBRL(dre.receitaLiquida)} />
         <Card title="COGS" value={fmtBRL(dre.cogs)} />
         <Card title="Despesas" value={fmtBRL(dre.despesas)} />
+
         <Card title="Resultado" value={fmtBRL(dre.resultado)}>
-          <div className="progress">
-            <div className="bar" style={{ width: `${progress * 100}%` }} />
-            <span>Meta: {fmtBRL(goal)}</span>
-          </div>
+          {goal > 0 && (
+            <div className="card-body-goal">
+              <div className="progress">
+                <div className="bar" style={{ width: `${progress * 100}%` }} />
+                
+                <span className={`progress-label ${isGoalLabelOnBar ? 'on-bar' : ''}`}>
+                  {fmtBRL(goal)}
+                </span>
+                
+                <span className={`progress-percentage ${isPercentageLabelOnBar ? 'on-bar' : ''}`}>
+                  {percentageText}
+                </span>
+              </div>
+            </div>
+          )}
         </Card>
       </div>
 
@@ -54,11 +152,20 @@ export default function DashboardView() {
       </div>
 
       <div className="panel">
-        <h3>Insights (em breve)</h3>
-        <p className="muted">
-          Placeholder para explicações. Por exemplo: “Descontos acima da média
-          reduziram a margem”.
-        </p>
+        <h3>Insights</h3>
+        {insights.length > 0 ? (
+          <div className="insights-grid">
+            {insights.map((insight, index) => (
+              <div key={index} className={`insight-card ${insight.type}`}>
+                <p>{insight.text}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="muted">
+            Aguardando dados para gerar insights...
+          </p>
+        )}
       </div>
     </div>
   );
