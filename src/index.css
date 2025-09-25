@@ -1,3 +1,4 @@
+/* Global css */
 :root {
   --bg: #f9fafb;
   --panel: #ffffff;
@@ -49,6 +50,7 @@ a {
   color: transparent;
 }
 
+/* Navbar styles */
 .navbar {
   position: sticky;
   top: 0;
@@ -106,6 +108,24 @@ a {
   align-items: center;
 }
 
+.navbar-links .navlink {
+  color: var(--text);
+  padding: 8px 0;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s ease-in-out;
+}
+
+.navbar-links .navlink:hover {
+  color: var(--accent);
+}
+
+.navbar-links .navlink.active {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* Button styles */
 .button-primary {
   background: var(--accent);
   color: #fff;
@@ -136,6 +156,7 @@ a {
   background: #f5f5f5;
 }
 
+/* Home Section styles */
 .section {
   padding-top: 5rem;
   padding-bottom: 5rem;
@@ -177,6 +198,7 @@ a {
   }
 }
 
+/* Feature Card styles */
 .feature-card {
   background: var(--panel);
   padding: 2rem;
@@ -200,6 +222,7 @@ a {
   font-size: 1.5rem;
 }
 
+/* Hero Section styles */
 .hero-content {
   display: flex;
   flex-direction: column;
@@ -241,23 +264,7 @@ a {
   }
 }
 
-.navbar-links .navlink {
-  color: var(--text);
-  padding: 8px 0;
-  font-weight: 500;
-  text-decoration: none;
-  transition: color 0.2s ease-in-out;
-}
-
-.navbar-links .navlink:hover {
-  color: var(--accent);
-}
-
-.navbar-links .navlink.active {
-  color: var(--accent);
-  font-weight: 600;
-}
-
+/* Form styles */
 .controls {
   display: flex;
   flex-wrap: wrap;
@@ -279,6 +286,7 @@ a {
   border-radius: 6px;
 }
 
+/* Icon Home styles */
 .icon-blue {
   background: #eff6ff;
   color: #3b82f6;
@@ -327,6 +335,7 @@ a {
   color: #8b5cf6;
 }
 
+/* Footer styles */
 .footer {
   background: #1f2937;
   color: #9ca3af;
