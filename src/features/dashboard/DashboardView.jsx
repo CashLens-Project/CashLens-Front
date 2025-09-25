@@ -38,82 +38,34 @@ export default function DashboardView() {
   const insights = [];
   const { resultado, receitaLiquida, despesas, cogs } = dre;
 
-  // Insight 1: Análise do Resultado vs. Meta
-  if (goal > 0) {
-    if (resultado >= goal) {
-      insights.push({
-        type: 'positive',
-        icon: '📈',
-        text: (
-          <>
-            <strong>Meta Atingida!</strong> O resultado de{' '}
-            <strong>{fmtBRL(resultado)}</strong> superou a meta de {fmtBRL(goal)}.
-          </>
-        ),
-      });
-    } else if (resultado > 0) {
-      insights.push({
-        type: 'info',
-        icon: '💡',
-        text: (
-          <>
-            O resultado de <strong>{fmtBRL(resultado)}</strong> está a{' '}
-            <strong>{fmtBRL(goal - resultado)}</strong> de atingir a meta.
-          </>
-        ),
-      });
-    } else {
-      insights.push({
-        type: 'negative',
-        icon: '📉',
-        text: (
-          <>
-            O resultado foi <strong>negativo</strong> em{' '}
-            <strong>{fmtBRL(resultado)}</strong>, ficando longe da meta de{' '}
-            {fmtBRL(goal)}.
-          </>
-        ),
-      });
-    }
+  const margemBruta = receitaLiquida - cogs;
+  const margemBrutaPercentual = receitaLiquida > 0 ? (margemBruta / receitaLiquida) * 100 : 0;
+  const despesasOperacionaisPercentual = receitaLiquida > 0 ? (despesas / receitaLiquida) * 100 : 0;
+
+  // Insight 1: Análise de Performance Financeira Geral
+  if (goal > 0 && resultado >= goal) {
+    insights.push({ type: 'positive', text: <><strong>Performance Excepcional.</strong> A meta de {fmtBRL(goal)} foi superada, alcançando um resultado de <strong>{fmtBRL(resultado)}</strong>. A estratégia atual demonstra alta eficácia e alinhamento com os objetivos.</> });
+  } else if (resultado < 0) {
+    insights.push({ type: 'negative', text: <><strong>Alerta de Rentabilidade.</strong> O mês encerrou com um prejuízo de <strong>{fmtBRL(resultado)}</strong>. É crucial realizar uma análise aprofundada da estrutura de custos e despesas para reverter este cenário e restaurar a lucratividade.</> });
+  } else if (goal > 0 && resultado > 0) {
+    insights.push({ type: 'info', text: <><strong>Operação Rentável, Meta Pendente.</strong> O lucro de <strong>{fmtBRL(resultado)}</strong> indica uma operação saudável. No entanto, o resultado está <strong>{((1 - resultado / goal) * 100).toFixed(0)}%</strong> abaixo da meta de {fmtBRL(goal)}, sugerindo a necessidade de otimizar a receita ou as despesas.</> });
   }
 
-  // Insight 2: Análise das Despesas
-  if (despesas > receitaLiquida && resultado < 0) {
-    insights.push({
-      type: 'negative',
-      icon: '📉',
-      text: (
-        <>
-          As <strong>despesas</strong> de <strong>{fmtBRL(despesas)}</strong>{' '}
-          foram o principal fator para o resultado negativo.
-        </>
-      ),
-    });
+  // Insight 2: Análise da Estrutura de Custos e Despesas
+  if (despesasOperacionaisPercentual > 65 && resultado < 0) {
+    insights.push({ type: 'negative', text: <><strong>Ponto Crítico: Despesas Operacionais.</strong> As despesas consumiram <strong>{despesasOperacionaisPercentual.toFixed(0)}%</strong> da receita líquida, sendo o principal vetor do resultado negativo. Recomenda-se uma auditoria de gastos fixos e variáveis.</> });
   }
 
-  // Insight 3: Análise da Margem de Contribuição
-  const margem = receitaLiquida - cogs;
-  if (receitaLiquida > 0 && margem < receitaLiquida * 0.4) {
-    insights.push({
-      type: 'info',
-      icon: '💡',
-      text: (
-        <>
-          A <strong>margem de contribuição</strong> está em{' '}
-          <strong>{fmtBRL(margem)}</strong>. Analise se os custos (COGS) estão
-          adequados.
-        </>
-      ),
-    });
+  // Insight 3: Análise da Margem Bruta
+  if (margemBrutaPercentual < 40 && receitaLiquida > 0) {
+    insights.push({ type: 'info', text: <><strong>Margem Bruta Sob Pressão.</strong> Sua margem de lucro bruto está em <strong>{margemBrutaPercentual.toFixed(0)}%</strong>. Este é um indicador de que a precificação pode não estar cobrindo adequadamente os custos diretos (COGS). Avalie a estratégia de preços e negocie com fornecedores.</> });
+  } else if (margemBrutaPercentual > 60 && receitaLiquida > 0) {
+    insights.push({ type: 'positive', text: <><strong>Excelente Eficiência de Custo.</strong> Com uma margem bruta de <strong>{margemBrutaPercentual.toFixed(0)}%</strong>, a relação entre o custo dos produtos e a receita está bem otimizada, criando uma base sólida para o lucro líquido.</> });
   }
-  
-  // Mensagem padrão se nenhum insight for gerado
+
+  // Mensagem padrão se nenhum insight crítico for gerado
   if (insights.length === 0 && dre.receitaLiquida > 0) {
-    insights.push({
-      type: 'info',
-      icon: '💡',
-      text: 'Nenhuma observação automática gerada para este período.',
-    });
+    insights.push({ type: 'info', text: <><strong>Operação Estável.</strong> Os indicadores financeiros do período estão dentro dos parâmetros esperados, sem alertas críticos ou picos de performance notáveis. A saúde financeira parece consistente.</> });
   }
 
   return (
@@ -132,11 +84,11 @@ export default function DashboardView() {
             <div className="card-body-goal">
               <div className="progress">
                 <div className="bar" style={{ width: `${progress * 100}%` }} />
-                
+
                 <span className={`progress-label ${isGoalLabelOnBar ? 'on-bar' : ''}`}>
                   {fmtBRL(goal)}
                 </span>
-                
+
                 <span className={`progress-percentage ${isPercentageLabelOnBar ? 'on-bar' : ''}`}>
                   {percentageText}
                 </span>
