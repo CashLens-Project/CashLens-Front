@@ -1,10 +1,9 @@
-
 import { useEffect } from 'react';
 import NavBar from '../../components/ui/NavBar.jsx';
-import placeholderImg from '../../assets/placeholder.png';
 import pexelsImg from '../../assets/pexels-artempodrez-5716001.jpg';
 import officeImg from '../../assets/office-workers-using-finance-graphs.jpg';
 import personImg from '../../assets/person-office-analyzing-checking-finance-graphs.jpg';
+import './HomeView.css';
 
 import Footer from '../../components/ui/Footer.jsx';
 import {
