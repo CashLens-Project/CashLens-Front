@@ -62,14 +62,14 @@ export default function HomeView() {
     {
       colorClass: 'icon-red',
       icon: <MdScience size={36} />, // Simulação
-      title: 'Simulação "E Se"',
+      title: 'Simulação "E Se" (Em Breve)',
       description:
         'Teste diferentes cenários e veja instantaneamente o impacto em seus resultados financeiros.',
     },
     {
       colorClass: 'icon-indigo',
       icon: <MdBolt size={36} />, // Insights IA
-      title: 'Insights de IA (Em Breve)',
+      title: 'Insights de IA',
       description:
         'Nossa IA identificará padrões e sugerirá oportunidades de melhoria em suas finanças.',
     },
