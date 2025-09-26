@@ -1,0 +1,12 @@
+
+.waterfall-view {
+  padding: 20px;
+}
+
+.waterfall-view .panel {
+  background-color: var(--color-card-background);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: var(--shadow-elevation-low);
+}
+

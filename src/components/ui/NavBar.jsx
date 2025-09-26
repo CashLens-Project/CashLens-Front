@@ -16,6 +16,9 @@ export default function NavBar() {
             <NavLink to="/dre" className="navlink">
               DRE
             </NavLink>
+            <NavLink to="/waterfall" className="navlink">
+              Waterfall
+            </NavLink>
           </div>
         </div>
       </div>

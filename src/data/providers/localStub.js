@@ -1,4 +1,4 @@
-import { computeDRE, computeTimeline } from "../compute";
+import { computeDRE, computeTimeline, computeWaterfall } from "../compute";
 
 const bundle = {
   sales: [
@@ -22,6 +22,10 @@ const bundle = {
     { id: "S-1013", date: "2025-09-06", channel: "ecommerce", netRevenue: 7200, taxes: 720, discounts: 350 },
     { id: "S-1014", date: "2025-09-18", channel: "loja2", netRevenue: 3500, taxes: 350, discounts: 150 },
     { id: "S-1015", date: "2025-09-28", channel: "loja1", netRevenue: 4000, taxes: 400, discounts: 200 },
+    // OUTUBRO 2025 - Novas vendas
+    { id: "S-1016", date: "2025-10-05", channel: "ecommerce", netRevenue: 15000, taxes: 1500, discounts: 500 },
+    { id: "S-1017", date: "2025-10-15", channel: "loja1", netRevenue: 8000, taxes: 800, discounts: 300 },
+    { id: "S-1018", date: "2025-10-20", channel: "loja2", netRevenue: 3000, taxes: 300, discounts: 100 },
   ],
   items: [
     { saleId: "S-1001", sku: "SKU-PREMIUM-A", qty: 1, price: 1000, cost: 400 },
@@ -45,6 +49,11 @@ const bundle = {
     { saleId: "S-1013", sku: "SKU-PREMIUM-A", qty: 6, price: 1200, cost: 350 },
     { saleId: "S-1014", sku: "SKU-STANDARD-B", qty: 5, price: 700, cost: 250 },
     { saleId: "S-1015", sku: "SKU-BASIC-C", qty: 10, price: 400, cost: 200 },
+    // OUTUBRO 2025 - Itens vendidos
+    { saleId: "S-1016", sku: "SKU-PREMIUM-A", qty: 10, price: 1500, cost: 600 },
+    { saleId: "S-1016", sku: "SKU-BASIC-C", qty: 5, price: 100, cost: 50 },
+    { saleId: "S-1017", sku: "SKU-STANDARD-B", qty: 8, price: 1000, cost: 400 },
+    { saleId: "S-1018", sku: "SKU-OUTLET-D", qty: 30, price: 100, cost: 70 },
   ],
   expenses: [
     // MAIO 2025 (Resultado Negativo)
@@ -69,6 +78,10 @@ const bundle = {
     { id: "E-9012", date: "2025-09-01", vendor: "Aluguel Hub", value: 1500, category: "Aluguel", type: "FIXA" },
     { id: "E-9013", date: "2025-09-10", vendor: "Folha de Pagamento", value: 2000, category: "Pessoal", type: "FIXA" },
     { id: "E-9014", date: "2025-09-20", vendor: "Anúncios Performance", value: 500, category: "Marketing", type: "VARIAVEL" },
+    // OUTUBRO 2025 - Novas despesas
+    { id: "E-9015", date: "2025-10-01", vendor: "Aluguel Hub", value: 1500, category: "Aluguel", type: "FIXA" },
+    { id: "E-9016", date: "2025-10-10", vendor: "Campanha de Outubro", value: 1000, category: "Marketing", type: "VARIAVEL" },
+    { id: "E-9017", date: "2025-10-25", vendor: "Serviços de TI", value: 700, category: "Tecnologia", type: "FIXA" },
   ],
   payouts: [
     { id: "P-7001", date: "2025-05-02", method: "CARD", netValue: 3000, fee: 50, saleId: "S-1001" },
@@ -83,6 +96,10 @@ const bundle = {
     { id: "P-7010", date: "2025-09-23", method: "PIX", netValue: 3000, fee: 0, saleId: "S-1010" },
     { id: "P-7010", date: "2025-09-24", method: "PIX", netValue: 3000, fee: 0, saleId: "S-1010" },
     { id: "P-7010", date: "2025-09-25", method: "PIX", netValue: 3000, fee: 0, saleId: "S-1010" },
+    // OUTUBRO 2025 - Pagamentos
+    { id: "P-7011", date: "2025-10-06", method: "CARD", netValue: 14000, fee: 200, saleId: "S-1016" },
+    { id: "P-7012", date: "2025-10-16", method: "PIX", netValue: 7700, fee: 0, saleId: "S-1017" },
+    { id: "P-7013", date: "2025-10-21", method: "CARD", netValue: 2900, fee: 50, saleId: "S-1018" },
   ],
 };
 
@@ -90,4 +107,5 @@ export const LocalProvider = {
   async loadAll() { return bundle; },
   async getDRE(month) { return computeDRE(bundle, month); },
   async getTimeline(month) { return computeTimeline(bundle, month); },
+  async getWaterfall(month) { return computeWaterfall(bundle, month); },
 };
