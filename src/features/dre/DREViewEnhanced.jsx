@@ -1,12 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
-  calcularReceitaLiquida,
-  calcularCOGS,
-  calcularDespesas,
-  calcularResultado,
-  calcularPercentualMeta,
-  calcularMargemBruta,
-  calcularMargemLiquida,
   formatarMoeda,
   formatarPercentual,
   gerarDadosMockados,

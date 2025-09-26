@@ -1,5 +1,4 @@
-
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import WaterfallChart from '../../components/charts/WaterfallChart';
 import Filter from '../../components/ui/Filter';
 import { provider } from '../../data/providers';
@@ -21,7 +20,7 @@ export default function WaterfallView() {
   return (
     <div className="stack">
       <div className="filter-container">
-        <Filter />
+        <Filter goalsEnabled={false} />
       </div>
       <div className="panel">
         <WaterfallChart data={waterfallData} />
