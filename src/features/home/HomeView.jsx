@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import NavBar from '../../components/ui/NavBar.jsx';
 import placeholderImg from '../../assets/placeholder.png';
-import Footer from '../../components/ui/footer.jsx';
+import Footer from '../../components/ui/Footer.jsx';
 
 export default function HomeView() {
 
