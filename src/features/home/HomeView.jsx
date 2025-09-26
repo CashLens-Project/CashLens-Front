@@ -2,6 +2,9 @@
 import { useEffect } from 'react';
 import NavBar from '../../components/ui/NavBar.jsx';
 import placeholderImg from '../../assets/placeholder.png';
+import pexelsImg from '../../assets/pexels-artempodrez-5716001.jpg';
+import officeImg from '../../assets/office-workers-using-finance-graphs.jpg';
+import personImg from '../../assets/person-office-analyzing-checking-finance-graphs.jpg';
 
 import Footer from '../../components/ui/Footer.jsx';
 import {
@@ -144,7 +147,7 @@ export default function HomeView() {
               </div>
             </div>
             <div className="hero-image">
-              <img src={placeholderImg} alt="Dashboard Financeiro" />
+              <img src={pexelsImg} alt="Dashboard Financeiro" />
             </div>
           </div>
         </div>
@@ -186,7 +189,7 @@ export default function HomeView() {
             ))}
           </div>
           <div style={{ marginTop: '4rem', textAlign: 'center' }}>
-            <img src={placeholderImg} alt="Processo CashLens" style={{ width: '100%', maxWidth: '640px', borderRadius: '0.75rem', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', border: '1px solid #e5e7eb' }} />
+            <img src={personImg} alt="Processo CashLens" style={{ width: '100%', maxWidth: '640px', borderRadius: '0.75rem', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', border: '1px solid #e5e7eb' }} />
           </div>
         </div>
       </section>
@@ -217,7 +220,7 @@ export default function HomeView() {
               </div>
             </div>
             <div>
-              <img src={placeholderImg} alt="Benefícios CashLens" style={{ width: '100%', borderRadius: '0.75rem', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', border: '1px solid #e5e7eb' }} />
+              <img src={officeImg} alt="Benefícios CashLens" style={{ width: '100%', borderRadius: '0.75rem', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', border: '1px solid #e5e7eb' }} />
             </div>
           </div>
         </div>
