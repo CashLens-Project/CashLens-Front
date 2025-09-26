@@ -1,7 +1,16 @@
+
 import { useEffect } from 'react';
 import NavBar from '../../components/ui/NavBar.jsx';
 import placeholderImg from '../../assets/placeholder.png';
-import Footer from '../../components/ui/footer.jsx';
+import pexelsImg from '../../assets/pexels-artempodrez-5716001.jpg';
+import officeImg from '../../assets/office-workers-using-finance-graphs.jpg';
+import personImg from '../../assets/person-office-analyzing-checking-finance-graphs.jpg';
+
+import Footer from '../../components/ui/Footer.jsx';
+import {
+  MdAttachMoney, MdTimeline, MdBarChart, MdAutorenew, MdScience, MdBolt,
+  MdAccessTime, MdVisibility, MdPsychologyAlt
+} from 'react-icons/md';
 
 export default function HomeView() {
 
@@ -25,42 +34,42 @@ export default function HomeView() {
   const features = [
     {
       colorClass: 'icon-blue',
-      icon: '💰',
+      icon: <MdAttachMoney size={36} />, // DRE Simplificada
       title: 'DRE Simplificada',
       description:
         'Visualize seu Demonstrativo de Resultados de forma clara e intuitiva, com análises automáticas de margens.',
     },
     {
       colorClass: 'icon-green',
-      icon: '📈',
+      icon: <MdTimeline size={36} />, // Linha do Tempo
       title: 'Linha do Tempo de Fluxo de Caixa',
       description:
         'Antecipe entradas e saídas com nossa linha do tempo interativa para melhor planejamento financeiro.',
     },
     {
       colorClass: 'icon-purple',
-      icon: '📊',
+      icon: <MdBarChart size={36} />, // Waterfall
       title: 'Visualização Waterfall',
       description:
         'Entenda como cada componente impacta seu lucro final com nossa visualização em cascata.',
     },
     {
       colorClass: 'icon-yellow',
-      icon: '🔄',
+      icon: <MdAutorenew size={36} />, // Reconciliação
       title: 'Reconciliação Automática',
       description:
         'Concilie facilmente vendas com pagamentos recebidos, identificando discrepâncias automaticamente.',
     },
     {
       colorClass: 'icon-red',
-      icon: '🧪',
+      icon: <MdScience size={36} />, // Simulação
       title: 'Simulação "E Se"',
       description:
         'Teste diferentes cenários e veja instantaneamente o impacto em seus resultados financeiros.',
     },
     {
       colorClass: 'icon-indigo',
-      icon: '⚡',
+      icon: <MdBolt size={36} />, // Insights IA
       title: 'Insights de IA (Em Breve)',
       description:
         'Nossa IA identificará padrões e sugerirá oportunidades de melhoria em suas finanças.',
@@ -94,19 +103,19 @@ export default function HomeView() {
   const benefits = [
     {
       colorClass: 'icon-blue',
-      icon: '⏱️',
+      icon: <MdAccessTime size={28} />, // Economize tempo
       title: 'Economize tempo',
       description: 'Reduza em até 80% o tempo gasto no fechamento financeiro mensal.',
     },
     {
       colorClass: 'icon-green',
-      icon: '👁️',
+      icon: <MdVisibility size={28} />, // Visibilidade
       title: 'Visibilidade completa',
       description: 'Tenha clareza sobre suas margens em diferentes níveis de análise.',
     },
     {
       colorClass: 'icon-purple',
-      icon: '🔮',
+      icon: <MdPsychologyAlt size={28} />, // Previsibilidade
       title: 'Previsibilidade',
       description: 'Antecipe problemas de fluxo de caixa com semanas de antecedência.',
     },
@@ -138,7 +147,7 @@ export default function HomeView() {
               </div>
             </div>
             <div className="hero-image">
-              <img src={placeholderImg} alt="Dashboard Financeiro" />
+              <img src={pexelsImg} alt="Dashboard Financeiro" />
             </div>
           </div>
         </div>
@@ -170,21 +179,17 @@ export default function HomeView() {
         <div className="container">
           <h2 className="section-title">Como Funciona</h2>
           <p className="section-subtitle">Integração simples e resultados imediatos</p>
-          <div className="grid grid-cols-2">
+          <div className="how-steps-box">
             {steps.map((step, idx) => (
-              <div key={idx} style={{ textAlign: 'center' }}>
-                <div className={`step-circle ${step.colorClass}`} style={{ marginLeft: 'auto', marginRight: 'auto', marginBottom: '1.5rem' }}>
-                  {step.number}
-                </div>
-                <h3 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '0.5rem', color: 'var(--text)' }}>
-                  {step.title}
-                </h3>
-                <p style={{ color: 'var(--muted)', fontSize: '0.875rem' }}>{step.description}</p>
+              <div className="how-step" key={idx}>
+                <div className={`step-circle ${step.colorClass}`}>{step.number}</div>
+                <h3>{step.title}</h3>
+                <p>{step.description}</p>
               </div>
             ))}
           </div>
           <div style={{ marginTop: '4rem', textAlign: 'center' }}>
-            <img src={placeholderImg} alt="Processo CashLens" style={{ width: '100%', maxWidth: '640px', borderRadius: '0.75rem', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', border: '1px solid #e5e7eb' }} />
+            <img src={personImg} alt="Processo CashLens" style={{ width: '100%', maxWidth: '640px', borderRadius: '0.75rem', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', border: '1px solid #e5e7eb' }} />
           </div>
         </div>
       </section>
@@ -215,7 +220,7 @@ export default function HomeView() {
               </div>
             </div>
             <div>
-              <img src={placeholderImg} alt="Benefícios CashLens" style={{ width: '100%', borderRadius: '0.75rem', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', border: '1px solid #e5e7eb' }} />
+              <img src={officeImg} alt="Benefícios CashLens" style={{ width: '100%', borderRadius: '0.75rem', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', border: '1px solid #e5e7eb' }} />
             </div>
           </div>
         </div>
