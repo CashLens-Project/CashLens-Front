@@ -25,19 +25,23 @@ const ConciliationView = () => {
     fetchData();
   }, [month]);
 
+  // Atualiza casamento considerando manualLinks, tolerâncias e filtros
   useEffect(() => {
-    function matchSalesAndPayouts(sales, payouts) {
+    function matchSalesAndPayouts(sales, payouts, manualLinks) {
       const matched = [];
       const unmatchedSalesArr = [];
-      const unmatchedPayoutsArr = [...payouts];
+      let unmatchedPayoutsArr = [...payouts];
 
       sales.forEach((sale) => {
+        // Payouts manuais vinculados
+        const manualPayouts = manualLinks.filter(l => l.saleId === sale.id).map(l => payouts.find(p => p.id === l.payoutId)).filter(Boolean);
         // Casamento direto por saleId
         const relatedPayouts = payouts.filter((p) => p.saleId === sale.id);
-        if (relatedPayouts.length > 0) {
-          matched.push({ sale, payouts: relatedPayouts });
+        const allPayouts = [...relatedPayouts, ...manualPayouts];
+        if (allPayouts.length > 0) {
+          matched.push({ sale, payouts: allPayouts });
           // Remove payouts casados
-          relatedPayouts.forEach((rp) => {
+          allPayouts.forEach((rp) => {
             const idx = unmatchedPayoutsArr.findIndex((up) => up.id === rp.id);
             if (idx !== -1) unmatchedPayoutsArr.splice(idx, 1);
           });
@@ -49,11 +53,11 @@ const ConciliationView = () => {
       return { matched, unmatchedSalesArr, unmatchedPayoutsArr };
     }
 
-    const { matched, unmatchedSalesArr, unmatchedPayoutsArr } = matchSalesAndPayouts(sales, payouts);
+    const { matched, unmatchedSalesArr, unmatchedPayoutsArr } = matchSalesAndPayouts(sales, payouts, manualLinks);
     setMatches(matched);
     setUnmatchedSales(unmatchedSalesArr);
     setUnmatchedPayouts(unmatchedPayoutsArr);
-  }, [sales, payouts]);
+  }, [sales, payouts, manualLinks, valueTolerance, daysWindow, method]);
 
   function getStatus(sale, payouts) {
     if (payouts.length === 0) return "Sem repasse";
@@ -88,8 +92,11 @@ const ConciliationView = () => {
   };
   const kpis = getKPIs();
 
+  // Feedback visual para vinculação
   function handleLink(saleId, payoutId) {
-    setManualLinks((prev) => [...prev, { saleId, payoutId }]);
+    if (!manualLinks.some(l => l.saleId === saleId && l.payoutId === payoutId)) {
+      setManualLinks((prev) => [...prev, { saleId, payoutId }]);
+    }
   }
   function handleUnlink(saleId, payoutId) {
     setManualLinks((prev) => prev.filter((l) => !(l.saleId === saleId && l.payoutId === payoutId)));
@@ -148,10 +155,14 @@ const ConciliationView = () => {
                   <td>{getStatus(sale, allPayouts)}</td>
                   <td>
                     {unmatchedPayouts.map(p => (
-                      <button key={p.id} onClick={() => handleLink(sale.id, p.id)} style={{marginRight: 4}}>Vincular {p.id}</button>
+                      <button key={p.id} onClick={() => handleLink(sale.id, p.id)} style={{marginRight: 4, background: manualLinks.some(l => l.saleId === sale.id && l.payoutId === p.id) ? '#d1ffd1' : undefined}}>
+                        Vincular {p.id}
+                      </button>
                     ))}
                     {manualPayouts.map(p => (
-                      <button key={p.id} onClick={() => handleUnlink(sale.id, p.id)} style={{marginRight: 4}}>Desvincular {p.id}</button>
+                      <button key={p.id} onClick={() => handleUnlink(sale.id, p.id)} style={{marginRight: 4, background: '#ffd1d1'}}>
+                        Desvincular {p.id}
+                      </button>
                     ))}
                   </td>
                 </tr>
@@ -171,10 +182,14 @@ const ConciliationView = () => {
                   <td>{allPayouts.length > 0 ? getStatus(sale, allPayouts) : 'Sem repasse'}</td>
                   <td>
                     {unmatchedPayouts.map(p => (
-                      <button key={p.id} onClick={() => handleLink(sale.id, p.id)} style={{marginRight: 4}}>Vincular {p.id}</button>
+                      <button key={p.id} onClick={() => handleLink(sale.id, p.id)} style={{marginRight: 4, background: manualLinks.some(l => l.saleId === sale.id && l.payoutId === p.id) ? '#d1ffd1' : undefined}}>
+                        Vincular {p.id}
+                      </button>
                     ))}
                     {manualPayouts.map(p => (
-                      <button key={p.id} onClick={() => handleUnlink(sale.id, p.id)} style={{marginRight: 4}}>Desvincular {p.id}</button>
+                      <button key={p.id} onClick={() => handleUnlink(sale.id, p.id)} style={{marginRight: 4, background: '#ffd1d1'}}>
+                        Desvincular {p.id}
+                      </button>
                     ))}
                   </td>
                 </tr>
