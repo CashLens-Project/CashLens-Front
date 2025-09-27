@@ -1,235 +1,218 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { provider } from "../../data/providers";
 import { useFiltersStore } from "../../app/store";
 import Filter from "../../components/ui/Filter";
 import "./ConciliationView.css";
 
+const money = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+
 const ConciliationView = () => {
   const month = useFiltersStore((s) => s.month);
+
   const [sales, setSales] = useState([]);
   const [payouts, setPayouts] = useState([]);
   const [matches, setMatches] = useState([]);
   const [unmatchedSales, setUnmatchedSales] = useState([]);
   const [unmatchedPayouts, setUnmatchedPayouts] = useState([]);
   const [method, setMethod] = useState("");
-  const [valueTolerance, setValueTolerance] = useState(50);
-  const [daysWindow, setDaysWindow] = useState(2);
-  const [manualLinks, setManualLinks] = useState([]);
 
+  // Carrega somente dados do mês selecionado
   useEffect(() => {
     async function fetchData() {
       const bundle = await provider.loadAll();
-      setSales(bundle.sales);
-      setPayouts(bundle.payouts);
+      const inMonth = (d) => (d || "").slice(0, 7) === month;
+
+      const salesMonth = (bundle.sales || []).filter((s) => inMonth(s.date));
+      const payoutsMonth = (bundle.payouts || []).filter((p) => inMonth(p.date));
+
+      setSales(salesMonth);
+      setPayouts(payoutsMonth);
     }
     fetchData();
   }, [month]);
 
-  // Atualiza casamento considerando manualLinks, tolerâncias e filtros
+  // Matching simples
   useEffect(() => {
-    function matchSalesAndPayouts(sales, payouts, manualLinks) {
-      const matched = [];
-      const unmatchedSalesArr = [];
-      let unmatchedPayoutsArr = [...payouts];
+    const remaining = [...payouts];
+    const matched = [];
+    const unmatchedSalesArr = [];
 
-      sales.forEach((sale) => {
-        // Payouts manuais vinculados
-        const manualPayouts = manualLinks.filter(l => l.saleId === sale.id).map(l => payouts.find(p => p.id === l.payoutId)).filter(Boolean);
-        // Casamento direto por saleId
-        const relatedPayouts = payouts.filter((p) => p.saleId === sale.id);
-        const allPayouts = [...relatedPayouts, ...manualPayouts];
-        if (allPayouts.length > 0) {
-          matched.push({ sale, payouts: allPayouts });
-          // Remove payouts casados
-          allPayouts.forEach((rp) => {
-            const idx = unmatchedPayoutsArr.findIndex((up) => up.id === rp.id);
-            if (idx !== -1) unmatchedPayoutsArr.splice(idx, 1);
-          });
-        } else {
-          unmatchedSalesArr.push(sale);
-        }
-      });
+    const consumeRef = (obj) => {
+      const i = remaining.indexOf(obj);
+      if (i !== -1) remaining.splice(i, 1);
+    };
 
-      return { matched, unmatchedSalesArr, unmatchedPayoutsArr };
+    for (const sale of sales) {
+      const direct = payouts.filter((p) => p.saleId === sale.id);
+      if (direct.length > 0) {
+        matched.push({ sale, payouts: direct });
+        direct.forEach(consumeRef);
+      } else {
+        unmatchedSalesArr.push(sale);
+      }
     }
 
-    const { matched, unmatchedSalesArr, unmatchedPayoutsArr } = matchSalesAndPayouts(sales, payouts, manualLinks);
     setMatches(matched);
     setUnmatchedSales(unmatchedSalesArr);
-    setUnmatchedPayouts(unmatchedPayoutsArr);
-  }, [sales, payouts, manualLinks, valueTolerance, daysWindow, method]);
+    setUnmatchedPayouts(remaining);
+  }, [sales, payouts]);
 
-  function getStatus(sale, payouts) {
-    if (payouts.length === 0) return "Sem repasse";
-    const totalPayout = payouts.reduce((sum, p) => sum + p.netValue, 0);
-    const deltaValue = totalPayout - sale.netRevenue;
-    const saleDate = new Date(sale.date);
-    const payoutDates = payouts.map((p) => new Date(p.date));
-    const dateOk = payoutDates.every((pd) => Math.abs((pd - saleDate) / (1000*60*60*24)) <= daysWindow);
-    if (Math.abs(deltaValue) <= valueTolerance && dateOk) return "Conciliado";
-    if (!dateOk) return "Divergente";
-    return "Divergente";
+  function getStatus(sale, payoutsForSale) {
+    if (payoutsForSale.length === 0) return "Sem repasse";
+    const total = payoutsForSale.reduce((s, p) => s + (p.netValue || 0), 0);
+    const diff = Math.abs(total - Number(sale.netRevenue || 0));
+    return diff < 0.005 ? "Conciliado" : "Divergente";
   }
 
-  const filteredMatches = matches.filter(({sale, payouts}) => {
-    if (method && !payouts.some(p => p.method === method)) return false;
-    return true;
-  });
-  const filteredUnmatchedPayouts = unmatchedPayouts.filter(p => !method || p.method === method);
+  const filteredMatches = useMemo(
+    () => matches.filter(({ payouts }) => (method ? payouts.some((p) => p.method === method) : true)),
+    [matches, method]
+  );
+  const filteredUnmatchedPayouts = useMemo(
+    () => unmatchedPayouts.filter((p) => (method ? p.method === method : true)),
+    [unmatchedPayouts, method]
+  );
 
-  const getKPIs = () => {
+  const kpis = useMemo(() => {
     const totalSales = sales.length;
-    const totalMatched = matches.length;
-    const totalUnmatchedSales = unmatchedSales.length;
-    const totalUnmatchedPayouts = unmatchedPayouts.length;
-    const totalDivergente = filteredMatches.filter(({sale, payouts}) => getStatus(sale, payouts) === "Divergente").length;
+    const totalDivergente = filteredMatches.filter(
+      ({ sale, payouts }) => getStatus(sale, payouts) !== "Conciliado"
+    ).length;
+    const totalConciliado = filteredMatches.length - totalDivergente;
     return {
-      percentConciliado: totalSales > 0 ? ((totalMatched - totalDivergente) / totalSales * 100).toFixed(1) : "0",
-      totalSemRepasse: totalUnmatchedSales,
-      totalRepasseSemVenda: totalUnmatchedPayouts,
+      percentConciliado: totalSales > 0 ? ((totalConciliado / totalSales) * 100).toFixed(1) : "0",
+      totalSemRepasse: unmatchedSales.length,
+      totalRepasseSemVenda: filteredUnmatchedPayouts.length,
       totalDivergente,
     };
-  };
-  const kpis = getKPIs();
-
-  // Feedback visual para vinculação
-  function handleLink(saleId, payoutId) {
-    if (!manualLinks.some(l => l.saleId === saleId && l.payoutId === payoutId)) {
-      setManualLinks((prev) => [...prev, { saleId, payoutId }]);
-    }
-  }
-  function handleUnlink(saleId, payoutId) {
-    setManualLinks((prev) => prev.filter((l) => !(l.saleId === saleId && l.payoutId === payoutId)));
-  }
-  function getManualPayouts(sale) {
-    return manualLinks.filter(l => l.saleId === sale.id).map(l => payouts.find(p => p.id === l.payoutId)).filter(Boolean);
-  }
+  }, [filteredMatches, sales.length, unmatchedSales.length, filteredUnmatchedPayouts.length]);
 
   return (
     <div className="conciliation-view">
-      <h1>Conciliação</h1>
-      <div className="conciliation-controls">
-        <Filter goalsEnabled={false} />
-        <label style={{marginLeft: '1rem'}}>Método:
-          <select value={method} onChange={e => setMethod(e.target.value)}>
-            <option value="">Todos</option>
-            <option value="PIX">PIX</option>
-            <option value="CARD">CARD</option>
-            <option value="BOLETO">BOLETO</option>
-          </select>
-        </label>
-        <label style={{marginLeft: '1rem'}}>Tolerância valor (R$):
-          <input type="number" value={valueTolerance} onChange={e => setValueTolerance(Number(e.target.value))} style={{width: 60}} />
-        </label>
-        <label style={{marginLeft: '1rem'}}>Janela dias (±):
-          <input type="number" value={daysWindow} onChange={e => setDaysWindow(Number(e.target.value))} style={{width: 40}} />
-        </label>
+      {/* HEADER padronizado (como DRE) */}
+      <div className="cv-header">
+        <h1>Conciliação de Repasses</h1>
+        <div className="cv-header-controls">
+          <Filter goalsEnabled={false} />
+          <div className="field">
+            <label htmlFor="method">Método</label>
+            <select
+              id="method"
+              className="select-like-month"
+              value={method}
+              onChange={(e) => setMethod(e.target.value)}
+            >
+              <option value="">Todos</option>
+              <option value="PIX">PIX</option>
+              <option value="CARD">CARD</option>
+              <option value="BOLETO">BOLETO</option>
+            </select>
+          </div>
+        </div>
       </div>
+
+      {/* KPIs */}
+      <div className="conciliation-kpis">
+        <div className="kpi-card good">
+          <div className="kpi-label">% Conciliado</div>
+          <div className="kpi-value">{kpis.percentConciliado}%</div>
+        </div>
+        <div className="kpi-card warn">
+          <div className="kpi-label">Sem repasse</div>
+          <div className="kpi-value">{kpis.totalSemRepasse}</div>
+        </div>
+        <div className="kpi-card warn">
+          <div className="kpi-label">Repasse sem venda</div>
+          <div className="kpi-value">{kpis.totalRepasseSemVenda}</div>
+        </div>
+        <div className="kpi-card bad">
+          <div className="kpi-label">Divergente</div>
+          <div className="kpi-value">{kpis.totalDivergente}</div>
+        </div>
+      </div>
+
+      {/* Tabela */}
       <div className="conciliation-table">
-        {/* Tabela de conciliação será renderizada aqui */}
-        <table style={{width: '100%', borderCollapse: 'collapse'}}>
+        <table className="cv-table">
           <thead>
             <tr>
               <th>Venda</th>
               <th>Data</th>
-              <th>Valor</th>
-              <th>Payout(s)</th>
-              <th>Total Payout</th>
+              <th>Valor líquido</th>
+              <th>Repasse(s)</th>
+              <th>Total repassado</th>
               <th>Δ Valor</th>
               <th>Status</th>
-              <th>Ações</th>
             </tr>
           </thead>
           <tbody>
-            {filteredMatches.map(({sale, payouts}) => {
-              const manualPayouts = getManualPayouts(sale);
-              const allPayouts = [...payouts, ...manualPayouts];
+            {filteredMatches.map(({ sale, payouts }) => {
+              const totalPayout = payouts.reduce((sum, p) => sum + p.netValue, 0);
+              const delta = totalPayout - sale.netRevenue;
+              const status = getStatus(sale, payouts);
               return (
-                <tr key={sale.id}>
-                  <td>{sale.id}</td>
+                <tr key={sale.id} className={status === "Conciliado" ? "row-ok" : "row-bad"}>
+                  <td className="mono">{sale.id}</td>
                   <td>{sale.date}</td>
-                  <td>R$ {sale.netRevenue.toFixed(2)}</td>
-                  <td>{allPayouts.map(p => `${p.id} (${p.method})`).join(", ")}</td>
-                  <td>R$ {allPayouts.reduce((sum, p) => sum + p.netValue, 0).toFixed(2)}</td>
-                  <td>R$ {(allPayouts.reduce((sum, p) => sum + p.netValue, 0) - sale.netRevenue).toFixed(2)}</td>
-                  <td>{getStatus(sale, allPayouts)}</td>
+                  <td>{money.format(sale.netRevenue)}</td>
+                  <td className="wrap">{payouts.map((p) => `${p.id} (${p.method})`).join(", ")}</td>
+                  <td>{money.format(totalPayout)}</td>
+                  <td className={delta === 0 ? "delta-ok" : delta > 0 ? "delta-pos" : "delta-neg"}>
+                    {money.format(delta)}
+                  </td>
                   <td>
-                    {unmatchedPayouts.map(p => (
-                      <button key={p.id} onClick={() => handleLink(sale.id, p.id)} style={{marginRight: 4, background: manualLinks.some(l => l.saleId === sale.id && l.payoutId === p.id) ? '#d1ffd1' : undefined}}>
-                        Vincular {p.id}
-                      </button>
-                    ))}
-                    {manualPayouts.map(p => (
-                      <button key={p.id} onClick={() => handleUnlink(sale.id, p.id)} style={{marginRight: 4, background: '#ffd1d1'}}>
-                        Desvincular {p.id}
-                      </button>
-                    ))}
+                    <span className={status === "Conciliado" ? "pill pill-ok" : "pill pill-bad"}>
+                      {status}
+                    </span>
                   </td>
                 </tr>
               );
             })}
-            {unmatchedSales.map(sale => {
-              const manualPayouts = getManualPayouts(sale);
-              const allPayouts = manualPayouts;
-              return (
-                <tr key={sale.id}>
-                  <td>{sale.id}</td>
-                  <td>{sale.date}</td>
-                  <td>R$ {sale.netRevenue.toFixed(2)}</td>
-                  <td>{allPayouts.length > 0 ? allPayouts.map(p => `${p.id} (${p.method})`).join(", ") : '-'}</td>
-                  <td>{allPayouts.length > 0 ? `R$ ${allPayouts.reduce((sum, p) => sum + p.netValue, 0).toFixed(2)}` : '-'}</td>
-                  <td>{allPayouts.length > 0 ? `R$ ${(allPayouts.reduce((sum, p) => sum + p.netValue, 0) - sale.netRevenue).toFixed(2)}` : '-'}</td>
-                  <td>{allPayouts.length > 0 ? getStatus(sale, allPayouts) : 'Sem repasse'}</td>
-                  <td>
-                    {unmatchedPayouts.map(p => (
-                      <button key={p.id} onClick={() => handleLink(sale.id, p.id)} style={{marginRight: 4, background: manualLinks.some(l => l.saleId === sale.id && l.payoutId === p.id) ? '#d1ffd1' : undefined}}>
-                        Vincular {p.id}
-                      </button>
-                    ))}
-                    {manualPayouts.map(p => (
-                      <button key={p.id} onClick={() => handleUnlink(sale.id, p.id)} style={{marginRight: 4, background: '#ffd1d1'}}>
-                        Desvincular {p.id}
-                      </button>
-                    ))}
-                  </td>
-                </tr>
-              );
-            })}
-            {filteredUnmatchedPayouts.map(payout => (
-              <tr key={payout.id}>
-                <td>-</td>
+
+            {unmatchedSales.map((sale) => (
+              <tr key={sale.id} className="row-warn">
+                <td className="mono">{sale.id}</td>
+                <td>{sale.date}</td>
+                <td>{money.format(sale.netRevenue)}</td>
+                <td>—</td>
+                <td>—</td>
+                <td>—</td>
+                <td><span className="pill pill-warn">Sem repasse</span></td>
+              </tr>
+            ))}
+
+            {filteredUnmatchedPayouts.map((payout) => (
+              <tr key={payout.id} className="row-info">
+                <td>—</td>
                 <td>{payout.date}</td>
-                <td>-</td>
+                <td>—</td>
                 <td>{payout.id} ({payout.method})</td>
-                <td>R$ {payout.netValue.toFixed(2)}</td>
-                <td>-</td>
-                <td>Repasse sem venda</td>
-                <td></td>
+                <td>{money.format(payout.netValue)}</td>
+                <td>—</td>
+                <td><span className="pill pill-info">Repasse sem venda</span></td>
               </tr>
             ))}
           </tbody>
         </table>
-        <div style={{marginTop: '1rem'}}>
-          <strong>Vendas carregadas:</strong> {sales.length}<br />
-          <strong>Repasses carregados:</strong> {payouts.length}<br />
-          <strong>Vendas casadas:</strong> {matches.length}<br />
-          <strong>Vendas sem repasse:</strong> {unmatchedSales.length}<br />
-          <strong>Repasses sem venda:</strong> {unmatchedPayouts.length}
+
+        <div className="cv-foot">
+          <div><strong>Vendas carregadas:</strong> {sales.length}</div>
+          <div><strong>Repasses carregados:</strong> {payouts.length}</div>
+          <div><strong>Vendas casadas:</strong> {matches.length}</div>
+          <div><strong>Vendas sem repasse:</strong> {unmatchedSales.length}</div>
+          <div><strong>Repasses sem venda:</strong> {unmatchedPayouts.length}</div>
         </div>
       </div>
-      <div className="conciliation-kpis">
-        <div>
-          <strong>% Conciliado:</strong> {kpis.percentConciliado}%
-        </div>
-        <div>
-          <strong>Total sem repasse:</strong> {kpis.totalSemRepasse}
-        </div>
-        <div>
-          <strong>Repasse sem venda:</strong> {kpis.totalRepasseSemVenda}
-        </div>
-        <div>
-          <strong>Divergente:</strong> {kpis.totalDivergente}
-        </div>
+
+      {/* Card explicativo dos status */}
+      <div className="status-explain">
+        <h3>Como ler os status</h3>
+        <ul>
+          <li><span className="pill pill-ok">Conciliado</span> Há repasse(s) para a venda e a soma bate com o valor da venda.</li>
+          <li><span className="pill pill-bad">Divergente</span> Existem repasses, mas o total não confere com o valor da venda.</li>
+          <li><span className="pill pill-warn">Sem repasse</span> A venda não possui repasse no período selecionado.</li>
+          <li><span className="pill pill-info">Repasse sem venda</span> Existe repasse no período, mas não há venda correspondente.</li>
+        </ul>
       </div>
     </div>
   );
