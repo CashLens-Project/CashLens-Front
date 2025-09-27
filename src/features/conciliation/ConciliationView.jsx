@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { provider } from "../../data/providers";
 import { useFiltersStore } from "../../app/store";
+import Filter from "../../components/ui/Filter";
 import "./ConciliationView.css";
 
 const ConciliationView = () => {
@@ -10,6 +11,9 @@ const ConciliationView = () => {
   const [matches, setMatches] = useState([]);
   const [unmatchedSales, setUnmatchedSales] = useState([]);
   const [unmatchedPayouts, setUnmatchedPayouts] = useState([]);
+  const [method, setMethod] = useState("");
+  const [valueTolerance, setValueTolerance] = useState(50);
+  const [daysWindow, setDaysWindow] = useState(2);
 
   useEffect(() => {
     async function fetchData() {
@@ -54,22 +58,39 @@ const ConciliationView = () => {
     if (payouts.length === 0) return "Sem repasse";
     const totalPayout = payouts.reduce((sum, p) => sum + p.netValue, 0);
     const deltaValue = totalPayout - sale.netRevenue;
-    // Tolerância fixa para exemplo
-    const valueTolerance = 50; // R$
-    const daysTolerance = 2; // dias
     const saleDate = new Date(sale.date);
     const payoutDates = payouts.map((p) => new Date(p.date));
-    const dateOk = payoutDates.every((pd) => Math.abs((pd - saleDate) / (1000*60*60*24)) <= daysTolerance);
+    const dateOk = payoutDates.every((pd) => Math.abs((pd - saleDate) / (1000*60*60*24)) <= daysWindow);
     if (Math.abs(deltaValue) <= valueTolerance && dateOk) return "Conciliado";
     if (!dateOk) return "Divergente";
     return "Divergente";
   }
 
+  const filteredMatches = matches.filter(({sale, payouts}) => {
+    if (method && !payouts.some(p => p.method === method)) return false;
+    return true;
+  });
+  const filteredUnmatchedPayouts = unmatchedPayouts.filter(p => !method || p.method === method);
+
   return (
     <div className="conciliation-view">
       <h1>Conciliação</h1>
       <div className="conciliation-controls">
-        {/* Controles de filtro: mês/ano, método, tolerância, etc. */}
+        <Filter goalsEnabled={false} />
+        <label style={{marginLeft: '1rem'}}>Método:
+          <select value={method} onChange={e => setMethod(e.target.value)}>
+            <option value="">Todos</option>
+            <option value="PIX">PIX</option>
+            <option value="CARD">CARD</option>
+            <option value="BOLETO">BOLETO</option>
+          </select>
+        </label>
+        <label style={{marginLeft: '1rem'}}>Tolerância valor (R$):
+          <input type="number" value={valueTolerance} onChange={e => setValueTolerance(Number(e.target.value))} style={{width: 60}} />
+        </label>
+        <label style={{marginLeft: '1rem'}}>Janela dias (±):
+          <input type="number" value={daysWindow} onChange={e => setDaysWindow(Number(e.target.value))} style={{width: 40}} />
+        </label>
       </div>
       <div className="conciliation-table">
         {/* Tabela de conciliação será renderizada aqui */}
@@ -86,7 +107,7 @@ const ConciliationView = () => {
             </tr>
           </thead>
           <tbody>
-            {matches.map(({sale, payouts}) => (
+            {filteredMatches.map(({sale, payouts}) => (
               <tr key={sale.id}>
                 <td>{sale.id}</td>
                 <td>{sale.date}</td>
@@ -108,7 +129,7 @@ const ConciliationView = () => {
                 <td>Sem repasse</td>
               </tr>
             ))}
-            {unmatchedPayouts.map(payout => (
+            {filteredUnmatchedPayouts.map(payout => (
               <tr key={payout.id}>
                 <td>-</td>
                 <td>{payout.date}</td>
