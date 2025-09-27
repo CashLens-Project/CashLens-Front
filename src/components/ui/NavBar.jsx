@@ -11,10 +11,13 @@ export default function NavBar() {
               Home
             </NavLink>
             <NavLink to="/dashboard" className="navlink">
-              DashBoard
+              Fluxo de Caixa
             </NavLink>
             <NavLink to="/dre" className="navlink">
-              DRE
+              Resumo Financeiro
+            </NavLink>
+            <NavLink to="/waterfall" className="navlink">
+              Análise de Lucro
             </NavLink>
             <NavLink to="/waterfall" className="navlink">
               Waterfall
