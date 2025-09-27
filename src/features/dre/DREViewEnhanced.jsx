@@ -1,76 +1,136 @@
-import { useState, useEffect } from 'react';
-import {
-  formatarMoeda,
-  formatarPercentual,
-  gerarDadosMockados,
-  validarDados
-} from '../../utils/dreCalculations.js';
+import { useEffect, useMemo, useState } from 'react';
+import { useFiltersStore, useGoalsStore } from '../../app/store.js';
+import { provider } from '../../data/providers'; // usa o LocalProvider via index.js
+import Filter from '../../components/ui/Filter'; // ajuste o caminho se necessário
+import { formatarMoeda, formatarPercentual } from '../../utils/dreCalculations.js';
 import './DREView.css';
 
-const DREViewEnhanced = () => {
-  const [periodo, setPeriodo] = useState({
-    inicio: new Date().toISOString().slice(0, 7),
-    fim: new Date().toISOString().slice(0, 7)
-  });
+function somar(arr) {
+  return (arr || []).reduce((s, v) => s + (Number(v) || 0), 0);
+}
+
+export default function DREViewEnhanced() {
+  const month = useFiltersStore((s) => s.month);
+  const goals = useGoalsStore((s) => s.goals);
 
   const [dadosDRE, setDadosDRE] = useState(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
 
-  // Simula carregamento de dados
+  const metaDoMes = useMemo(() => {
+    const v = goals?.[month];
+    return typeof v === 'number' && !Number.isNaN(v) ? v : null;
+  }, [goals, month]);
+
   useEffect(() => {
-    const carregarDados = async () => {
-      setCarregando(true);
-      setErro(null);
+    let vivo = true;
 
+    async function carregar() {
       try {
-        // Simula delay de API
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        setCarregando(true);
+        setErro(null);
 
-        // Gera dados mockados baseados no período
-        const dados = gerarDadosMockados(periodo.inicio);
+        // LocalStub (computeDRE)
+        const dre = await provider.getDRE(month); // { month, receitaLiquida, cogs, despesas, resultado }
 
-        // Valida os dados
-        const validacao = validarDados(dados);
-        if (!validacao.valido) {
-          throw new Error(`Dados inválidos: ${validacao.erros.join(', ')}`);
+        // Carrega bundle para montar breakdown de despesas e fees financeiros
+        const bundle = await provider.loadAll();
+
+        const inMonth = (date) => (date || '').slice(0, 7) === month;
+
+        // despesas por categoria:
+        const despesasMes = (bundle.expenses || []).filter((e) => inMonth(e.date));
+
+        const adminCats = new Set(['Aluguel', 'Serviços', 'Tecnologia', 'Pessoal']);
+        const comerciaisCats = new Set(['Marketing']);
+
+        const despesasAdministrativas = somar(
+          despesasMes.filter((e) => adminCats.has(e.category)).map((e) => e.value)
+        );
+
+        const despesasComerciais = somar(
+          despesasMes.filter((e) => comerciaisCats.has(e.category)).map((e) => e.value)
+        );
+
+        // financeiras via fee dos payouts
+        const despesasFinanceiras = somar(
+          (bundle.payouts || [])
+            .filter((p) => inMonth(p.date))
+            .map((p) => p.fee || 0)
+        );
+
+        const despesasTotal =
+          despesasAdministrativas + despesasComerciais + despesasFinanceiras;
+
+        // Garante que o total usado é coerente: prioriza o que veio de computeDRE,
+        // mas se quiser “forçar” a soma das categorias, troque para despesasTotal.
+        const despesasConsolidadas =
+          typeof dre.despesas === 'number' ? dre.despesas : despesasTotal;
+
+        // 3) Margens
+        const receitaLiquida = Number(dre.receitaLiquida || 0);
+        const cogs = Number(dre.cogs || 0);
+        const resultado = Number(dre.resultado ?? receitaLiquida - cogs - despesasConsolidadas);
+
+        const margemBrutaPct =
+          receitaLiquida > 0 ? ((receitaLiquida - cogs) / receitaLiquida) * 100 : 0;
+        const margemLiquidaPct =
+          receitaLiquida > 0 ? (resultado / receitaLiquida) * 100 : 0;
+
+        // 4) Meta (se houver no store)
+        let meta = { valor: 0, percentualAtingido: 0 };
+        if (metaDoMes !== null) {
+          meta = {
+            valor: metaDoMes,
+            percentualAtingido: metaDoMes > 0 ? (resultado / metaDoMes) * 100 : 0,
+          };
         }
 
-        setDadosDRE(dados);
-      } catch (error) {
-        setErro(error.message);
+        const model = {
+          month,
+          receitaLiquida,
+          cogs,
+          despesas: {
+            administrativas: despesasAdministrativas,
+            comerciais: despesasComerciais,
+            financeiras: despesasFinanceiras,
+            total: despesasConsolidadas,
+          },
+          resultado,
+          margens: {
+            bruta: margemBrutaPct,
+            liquida: margemLiquidaPct,
+          },
+          meta,
+        };
+
+        if (vivo) setDadosDRE(model);
+      } catch (e) {
+        if (vivo) setErro(e.message || String(e));
       } finally {
-        setCarregando(false);
+        if (vivo) setCarregando(false);
       }
+    }
+
+    carregar();
+    return () => {
+      vivo = false;
     };
-
-    carregarDados();
-  }, [periodo]);
-
-  const handlePeriodoChange = (campo, valor) => {
-    setPeriodo(prev => ({
-      ...prev,
-      [campo]: valor
-    }));
-  };
+  }, [month, metaDoMes]);
 
   const exportarExcel = () => {
     if (!dadosDRE) return;
-
-    // exportação para Excel
-    // Por enquanto, apenas simula a ação
     const dadosExport = {
-      periodo: `${periodo.inicio} a ${periodo.fim}`,
+      periodo: month,
       receitaLiquida: dadosDRE.receitaLiquida,
       cogs: dadosDRE.cogs,
       despesas: dadosDRE.despesas.total,
       resultado: dadosDRE.resultado,
-      meta: dadosDRE.meta.valor,
-      percentualMeta: dadosDRE.meta.percentualAtingido
+      meta: dadosDRE.meta?.valor ?? null,
+      percentualMeta: dadosDRE.meta?.percentualAtingido ?? null,
     };
-
     console.log('Dados para exportação:', dadosExport);
-    alert('Funcionalidade de exportação será implementada com integração ao backend');
+    alert('Exportação será implementada com a integração ao backend.');
   };
 
   if (carregando) {
@@ -103,7 +163,7 @@ const DREViewEnhanced = () => {
       <div className="dre-container">
         <div className="no-data-container">
           <h2>Nenhum dado encontrado</h2>
-          <p>Não há dados disponíveis para o período selecionado.</p>
+          <p>Não há dados disponíveis para o mês selecionado.</p>
         </div>
       </div>
     );
@@ -114,38 +174,13 @@ const DREViewEnhanced = () => {
       <div className="dre-header">
         <h1>Demonstrativo do Resultado do Exercício (DRE)</h1>
         <div className="periodo-selector">
-          <label>
-            Período:
-            <input
-              type="month"
-              value={periodo.inicio}
-              onChange={(e) => handlePeriodoChange('inicio', e.target.value)}
-            />
-            até
-            <input
-              type="month"
-              value={periodo.fim}
-              onChange={(e) => handlePeriodoChange('fim', e.target.value)}
-            />
-          </label>
+          <Filter goalsEnabled={true} />
         </div>
       </div>
 
       <div className="dre-content">
         <div className="dre-section receitas">
           <h2>RECEITAS OPERACIONAIS</h2>
-          <div className="dre-item">
-            <span className="item-label">Receita Bruta de Vendas</span>
-            <span className="item-value">{formatarMoeda(dadosDRE.receitaLiquida + 7500)}</span>
-          </div>
-          <div className="dre-item">
-            <span className="item-label">(-) Impostos sobre Vendas</span>
-            <span className="item-value negative">{formatarMoeda(5000)}</span>
-          </div>
-          <div className="dre-item">
-            <span className="item-label">(-) Descontos Concedidos</span>
-            <span className="item-value negative">{formatarMoeda(2500)}</span>
-          </div>
           <div className="dre-subtotal">
             <span className="item-label">Receita Líquida</span>
             <span className="item-value">{formatarMoeda(dadosDRE.receitaLiquida)}</span>
@@ -160,7 +195,9 @@ const DREViewEnhanced = () => {
           </div>
           <div className="dre-subtotal">
             <span className="item-label">Lucro Bruto</span>
-            <span className="item-value">{formatarMoeda(dadosDRE.receitaLiquida - dadosDRE.cogs)}</span>
+            <span className="item-value">
+              {formatarMoeda(dadosDRE.receitaLiquida - dadosDRE.cogs)}
+            </span>
             <span className="item-percentage">
               {formatarPercentual(dadosDRE.margens.bruta)}
             </span>
@@ -171,19 +208,27 @@ const DREViewEnhanced = () => {
           <h2>DESPESAS OPERACIONAIS</h2>
           <div className="dre-item">
             <span className="item-label">(-) Despesas Administrativas</span>
-            <span className="item-value negative">{formatarMoeda(dadosDRE.despesas.administrativas)}</span>
+            <span className="item-value negative">
+              {formatarMoeda(dadosDRE.despesas.administrativas)}
+            </span>
           </div>
           <div className="dre-item">
             <span className="item-label">(-) Despesas Comerciais</span>
-            <span className="item-value negative">{formatarMoeda(dadosDRE.despesas.comerciais)}</span>
+            <span className="item-value negative">
+              {formatarMoeda(dadosDRE.despesas.comerciais)}
+            </span>
           </div>
           <div className="dre-item">
-            <span className="item-label">(-) Despesas Financeiras</span>
-            <span className="item-value negative">{formatarMoeda(dadosDRE.despesas.financeiras)}</span>
+            <span className="item-label">(-) Despesas Financeiras (fees)</span>
+            <span className="item-value negative">
+              {formatarMoeda(dadosDRE.despesas.financeiras)}
+            </span>
           </div>
           <div className="dre-subtotal">
             <span className="item-label">Total de Despesas Operacionais</span>
-            <span className="item-value negative">{formatarMoeda(dadosDRE.despesas.total)}</span>
+            <span className="item-value negative">
+              {formatarMoeda(dadosDRE.despesas.total)}
+            </span>
           </div>
         </div>
 
@@ -204,7 +249,7 @@ const DREViewEnhanced = () => {
           <h2>META vs REAL</h2>
           <div className="meta-comparison">
             <div className="meta-item">
-              <span className="meta-label">Meta do Período</span>
+              <span className="meta-label">Meta do Mês ({month})</span>
               <span className="meta-value">{formatarMoeda(dadosDRE.meta.valor)}</span>
             </div>
             <div className="meta-item">
@@ -213,24 +258,11 @@ const DREViewEnhanced = () => {
             </div>
             <div className="meta-item achievement">
               <span className="meta-label">% Atingido</span>
-              <span className={`meta-percentage ${dadosDRE.meta.percentualAtingido >= 100 ? 'success' : 'warning'}`}>
+              <span
+                className={`meta-percentage ${dadosDRE.meta.percentualAtingido >= 100 ? 'success' : 'warning'
+                  }`}
+              >
                 {formatarPercentual(dadosDRE.meta.percentualAtingido)}
-              </span>
-            </div>
-          </div>
-
-          <div className="meta-analysis">
-            <div className="analysis-item">
-              <span className="analysis-label">Status da Meta:</span>
-              <span className={`analysis-value ${dadosDRE.meta.percentualAtingido >= 100 ? 'success' : 'warning'}`}>
-                {dadosDRE.meta.percentualAtingido >= 100 ? 'Meta Atingida' : 'Meta Não Atingida'}
-              </span>
-            </div>
-            <div className="analysis-item">
-              <span className="analysis-label">Diferença:</span>
-              <span className={`analysis-value ${dadosDRE.resultado - dadosDRE.meta.valor >= 0 ? 'positive' : 'negative'}`}>
-                {formatarMoeda(Math.abs(dadosDRE.resultado - dadosDRE.meta.valor))}
-                {dadosDRE.resultado >= dadosDRE.meta.valor ? ' acima' : ' abaixo'}
               </span>
             </div>
           </div>
@@ -244,16 +276,17 @@ const DREViewEnhanced = () => {
         <button className="btn-secondary" onClick={exportarExcel}>
           Exportar Excel
         </button>
-        <button className="btn-secondary" onClick={() => {
-          const dados = gerarDadosMockados(periodo.inicio);
-          setDadosDRE(dados);
-        }}>
+        <button
+          className="btn-secondary"
+          onClick={() => {
+            // Recarrega com base no mês atual
+            setCarregando(true);
+            setTimeout(() => setCarregando(false), 300);
+          }}
+        >
           Atualizar Dados
         </button>
       </div>
     </div>
   );
-};
-
-export default DREViewEnhanced;
-
+}
