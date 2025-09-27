@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
-import NavBar from '../../components/ui/NavBar.jsx';
+import NavBar from '../../components/ui/NavBar/NavBar.jsx';
 import pexelsImg from '../../assets/pexels-artempodrez-5716001.jpg';
 import officeImg from '../../assets/office-workers-using-finance-graphs.jpg';
 import personImg from '../../assets/person-office-analyzing-checking-finance-graphs.jpg';
 import './HomeView.css';
 
-import Footer from '../../components/ui/Footer.jsx';
+import Footer from '../../components/ui/Footer/Footer.jsx';
 import {
   MdAttachMoney, MdTimeline, MdBarChart, MdAutorenew, MdScience, MdBolt,
   MdAccessTime, MdVisibility, MdPsychologyAlt

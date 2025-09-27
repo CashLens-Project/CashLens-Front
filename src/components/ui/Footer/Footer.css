@@ -1,0 +1,28 @@
+/* Footer styles */
+.footer {
+  background: #1f2937;
+  color: #9ca3af;
+  padding-top: 4rem;
+  padding-bottom: 2rem;
+}
+.footer a {
+  color: #9ca3af;
+  transition: color 0.2s;
+}
+.footer a:hover {
+  color: #ffffff;
+}
+.footer-title {
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #ffffff;
+}
+.footer-grid {
+  display: grid;
+  gap: 2rem;
+}
+@media (min-width: 768px) {
+  .footer-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

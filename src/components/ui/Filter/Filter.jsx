@@ -1,4 +1,5 @@
-import { useFiltersStore, useGoalsStore } from '../../app/store.js';
+import { useFiltersStore, useGoalsStore } from '../../../app/store.js';
+import './Filter.css';
 
 export default function Filter({ goalsEnabled = true }) {
   const month = useFiltersStore((s) => s.month);

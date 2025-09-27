@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { provider } from '../../data/providers/index.js';
 import { useFiltersStore, useGoalsStore } from '../../app/store.js';
-import Filter from '../../components/ui/Filter.jsx';
+import Filter from '../../components/ui/Filter/Filter.jsx';
 import Card from '../../components/ui/Card.jsx';
 import LineChart from '../../components/charts/LineChart.jsx';
 import { fmtBRL } from '../../utils/format.js';

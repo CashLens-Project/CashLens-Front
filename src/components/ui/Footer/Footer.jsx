@@ -1,3 +1,5 @@
+import './footer.css';
+
 const Footer = () => {
   return (
     <footer id="contact" className="footer">

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { provider } from "../../data/providers";
 import { useFiltersStore } from "../../app/store";
-import Filter from "../../components/ui/Filter";
+import Filter from "../../components/ui/Filter/Filter";
 import "./ConciliationView.css";
 
 const money = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
@@ -89,7 +89,7 @@ const ConciliationView = () => {
 
   return (
     <div className="conciliation-view">
-      {/* HEADER padronizado (como DRE) */}
+      {/* HEADER padronizado*/}
       <div className="cv-header">
         <h1>Reconciliação de Repasses</h1>
         <div className="cv-header-controls">
