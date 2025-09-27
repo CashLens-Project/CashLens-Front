@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import WaterfallChart from '../../components/charts/WaterfallChart';
-import Filter from '../../components/ui/Filter';
+import Filter from '../../components/ui/Filter/Filter';
 import { provider } from '../../data/providers';
 import { useFiltersStore } from '../../app/store';
 import './WaterfallView.css';
@@ -23,7 +23,7 @@ export default function WaterfallView() {
         <div className="page-header">
           <h1>Análise de Lucro</h1>
           <div className="page-header-controls">
-            <Filter />
+            <Filter goalsEnabled={false} />
           </div>
         </div>
         <div className="panel">

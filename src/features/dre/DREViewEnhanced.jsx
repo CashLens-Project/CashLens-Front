@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useFiltersStore, useGoalsStore } from '../../app/store.js';
 import { provider } from '../../data/providers'; // usa o LocalProvider via index.js
-import Filter from '../../components/ui/Filter'; // ajuste o caminho se necessário
+import Filter from '../../components/ui/Filter/Filter.jsx'; // ajuste o caminho se necessário
 import { formatarMoeda, formatarPercentual } from '../../utils/dreCalculations.js';
 import './DREView.css';
 
@@ -170,122 +170,124 @@ export default function DREViewEnhanced() {
   }
 
   return (
-    <div className="dre-container">
-      <div className="dre-header">
-        <h1>Demonstrativo do Resultado do Exercício (DRE)</h1>
-        <div className="periodo-selector">
-          <Filter goalsEnabled={true} />
-        </div>
-      </div>
-
-      <div className="dre-content">
-        <div className="dre-section receitas">
-          <h2>RECEITAS OPERACIONAIS</h2>
-          <div className="dre-subtotal">
-            <span className="item-label">Receita Líquida</span>
-            <span className="item-value">{formatarMoeda(dadosDRE.receitaLiquida)}</span>
+    <div className="page-container">
+      <div className="dre-container">
+        <div className="dre-header">
+          <h1>Demonstrativo do Resultado do Exercício (DRE)</h1>
+          <div className="periodo-selector">
+            <Filter goalsEnabled={true} />
           </div>
         </div>
 
-        <div className="dre-section custos">
-          <h2>CUSTOS DOS PRODUTOS VENDIDOS</h2>
-          <div className="dre-item">
-            <span className="item-label">(-) Custo das Mercadorias Vendidas (CMV)</span>
-            <span className="item-value negative">{formatarMoeda(dadosDRE.cogs)}</span>
-          </div>
-          <div className="dre-subtotal">
-            <span className="item-label">Lucro Bruto</span>
-            <span className="item-value">
-              {formatarMoeda(dadosDRE.receitaLiquida - dadosDRE.cogs)}
-            </span>
-            <span className="item-percentage">
-              {formatarPercentual(dadosDRE.margens.bruta)}
-            </span>
-          </div>
-        </div>
-
-        <div className="dre-section despesas">
-          <h2>DESPESAS OPERACIONAIS</h2>
-          <div className="dre-item">
-            <span className="item-label">(-) Despesas Administrativas</span>
-            <span className="item-value negative">
-              {formatarMoeda(dadosDRE.despesas.administrativas)}
-            </span>
-          </div>
-          <div className="dre-item">
-            <span className="item-label">(-) Despesas Comerciais</span>
-            <span className="item-value negative">
-              {formatarMoeda(dadosDRE.despesas.comerciais)}
-            </span>
-          </div>
-          <div className="dre-item">
-            <span className="item-label">(-) Despesas Financeiras (fees)</span>
-            <span className="item-value negative">
-              {formatarMoeda(dadosDRE.despesas.financeiras)}
-            </span>
-          </div>
-          <div className="dre-subtotal">
-            <span className="item-label">Total de Despesas Operacionais</span>
-            <span className="item-value negative">
-              {formatarMoeda(dadosDRE.despesas.total)}
-            </span>
-          </div>
-        </div>
-
-        <div className="dre-section resultado">
-          <h2>RESULTADO DO EXERCÍCIO</h2>
-          <div className="dre-total">
-            <span className="item-label">Resultado Líquido do Exercício</span>
-            <span className={`item-value ${dadosDRE.resultado >= 0 ? 'positive' : 'negative'}`}>
-              {formatarMoeda(dadosDRE.resultado)}
-            </span>
-            <span className="item-percentage">
-              {formatarPercentual(dadosDRE.margens.liquida)}
-            </span>
-          </div>
-        </div>
-
-        <div className="dre-section meta">
-          <h2>META vs REAL</h2>
-          <div className="meta-comparison">
-            <div className="meta-item">
-              <span className="meta-label">Meta do Mês ({month})</span>
-              <span className="meta-value">{formatarMoeda(dadosDRE.meta.valor)}</span>
+        <div className="dre-content">
+          <div className="dre-section receitas">
+            <h2>RECEITAS OPERACIONAIS</h2>
+            <div className="dre-subtotal">
+              <span className="item-label">Receita Líquida</span>
+              <span className="item-value">{formatarMoeda(dadosDRE.receitaLiquida)}</span>
             </div>
-            <div className="meta-item">
-              <span className="meta-label">Resultado Real</span>
-              <span className="meta-value">{formatarMoeda(dadosDRE.resultado)}</span>
+          </div>
+
+          <div className="dre-section custos">
+            <h2>CUSTOS DOS PRODUTOS VENDIDOS</h2>
+            <div className="dre-item">
+              <span className="item-label">(-) Custo das Mercadorias Vendidas (CMV)</span>
+              <span className="item-value negative">{formatarMoeda(dadosDRE.cogs)}</span>
             </div>
-            <div className="meta-item achievement">
-              <span className="meta-label">% Atingido</span>
-              <span
-                className={`meta-percentage ${dadosDRE.meta.percentualAtingido >= 100 ? 'success' : 'warning'
-                  }`}
-              >
-                {formatarPercentual(dadosDRE.meta.percentualAtingido)}
+            <div className="dre-subtotal">
+              <span className="item-label">Lucro Bruto</span>
+              <span className="item-value">
+                {formatarMoeda(dadosDRE.receitaLiquida - dadosDRE.cogs)}
+              </span>
+              <span className="item-percentage">
+                {formatarPercentual(dadosDRE.margens.bruta)}
               </span>
             </div>
           </div>
-        </div>
-      </div>
 
-      <div className="dre-actions">
-        <button className="btn-primary" onClick={() => window.print()}>
-          Imprimir DRE
-        </button>
-        <button className="btn-secondary" onClick={exportarExcel}>
-          Exportar Excel
-        </button>
-        <button
-          className="btn-secondary"
-          onClick={() => {
-            // Recarrega com base no mês atual
-            setCarregando(true);
-            setTimeout(() => setCarregando(false), 300);
-          }}
-        >
-          Atualizar Dados
-        </button>
+          <div className="dre-section despesas">
+            <h2>DESPESAS OPERACIONAIS</h2>
+            <div className="dre-item">
+              <span className="item-label">(-) Despesas Administrativas</span>
+              <span className="item-value negative">
+                {formatarMoeda(dadosDRE.despesas.administrativas)}
+              </span>
+            </div>
+            <div className="dre-item">
+              <span className="item-label">(-) Despesas Comerciais</span>
+              <span className="item-value negative">
+                {formatarMoeda(dadosDRE.despesas.comerciais)}
+              </span>
+            </div>
+            <div className="dre-item">
+              <span className="item-label">(-) Despesas Financeiras (fees)</span>
+              <span className="item-value negative">
+                {formatarMoeda(dadosDRE.despesas.financeiras)}
+              </span>
+            </div>
+            <div className="dre-subtotal">
+              <span className="item-label">Total de Despesas Operacionais</span>
+              <span className="item-value negative">
+                {formatarMoeda(dadosDRE.despesas.total)}
+              </span>
+            </div>
+          </div>
+
+          <div className="dre-section resultado">
+            <h2>RESULTADO DO EXERCÍCIO</h2>
+            <div className="dre-total">
+              <span className="item-label">Resultado Líquido do Exercício</span>
+              <span className={`item-value ${dadosDRE.resultado >= 0 ? 'positive' : 'negative'}`}>
+                {formatarMoeda(dadosDRE.resultado)}
+              </span>
+              <span className="item-percentage">
+                {formatarPercentual(dadosDRE.margens.liquida)}
+              </span>
+            </div>
+          </div>
+
+          <div className="dre-section meta">
+            <h2>META vs REAL</h2>
+            <div className="meta-comparison">
+              <div className="meta-item">
+                <span className="meta-label">Meta do Mês ({month})</span>
+                <span className="meta-value">{formatarMoeda(dadosDRE.meta.valor)}</span>
+              </div>
+              <div className="meta-item">
+                <span className="meta-label">Resultado Real</span>
+                <span className="meta-value">{formatarMoeda(dadosDRE.resultado)}</span>
+              </div>
+              <div className="meta-item achievement">
+                <span className="meta-label">% Atingido</span>
+                <span
+                  className={`meta-percentage ${dadosDRE.meta.percentualAtingido >= 100 ? 'success' : 'warning'
+                    }`}
+                >
+                  {formatarPercentual(dadosDRE.meta.percentualAtingido)}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="dre-actions">
+          <button className="btn-primary" onClick={() => window.print()}>
+            Imprimir DRE
+          </button>
+          <button className="btn-secondary" onClick={exportarExcel}>
+            Exportar Excel
+          </button>
+          <button
+            className="btn-secondary"
+            onClick={() => {
+              // Recarrega com base no mês atual
+              setCarregando(true);
+              setTimeout(() => setCarregando(false), 300);
+            }}
+          >
+            Atualizar Dados
+          </button>
+        </div>
       </div>
     </div>
   );
