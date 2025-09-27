@@ -1,50 +1,58 @@
 const Footer = () => {
   return (
-    <footer id="contact" className="footer">
-      <div className="container">
+    <footer className="app-footer">
+      <div className="footer">
         <div className="footer-grid">
-          <div>
-            <div className="navbar-brand" style={{ color: '#fff', marginBottom: '1rem' }}>CashLens</div>
-            <p style={{ marginBottom: '1rem' }}>
+          {/* Coluna da Marca */}
+          <div className="footer-brand">
+            <h2 className="brand-title">CashLens</h2>
+            <p className="brand-description">
               Análise financeira inteligente para negócios de todos os tamanhos.
             </p>
-            <div style={{ display: 'flex', gap: '0.75rem' }}>
-              <a href="#" title="Twitter">Twitter</a>
-              <a href="#" title="LinkedIn">LinkedIn</a>
-              <a href="#" title="Facebook">Facebook</a>
+            <div className="social-links">
+              <a href="#" className="social-link" title="Twitter">🐦</a>
+              <a href="#" className="social-link" title="LinkedIn">💼</a>
+              <a href="#" className="social-link" title="Facebook">📘</a>
             </div>
           </div>
-          
-          <div>
+
+          {/* Coluna Produto */}
+          <div className="footer-column">
             <h3 className="footer-title">Produto</h3>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+            <ul className="footer-links">
               <li><a href="#features">Recursos</a></li>
               <li><a href="#how-it-works">Como Funciona</a></li>
               <li><a href="#pricing">Preços</a></li>
               <li><a href="#">Integrações</a></li>
             </ul>
           </div>
-          <div>
+
+          {/* Coluna Empresa */}
+          <div className="footer-column">
             <h3 className="footer-title">Empresa</h3>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+            <ul className="footer-links">
               <li><a href="#">Sobre Nós</a></li>
               <li><a href="#">Carreiras</a></li>
               <li><a href="#">Blog</a></li>
               <li><a href="#contact">Contato</a></li>
             </ul>
           </div>
-          <div>
+
+          {/* Coluna Contato */}
+          <div className="footer-column">
             <h3 className="footer-title">Contato</h3>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-              <li>Email: contato@cashlens.com.br</li>
-              <li>Telefone: (11) 99999-9999</li>
-              <li>Distrito-Federal, Brasil</li>
+            <ul className="contact-info">
+              <li><span className="contact-icon">📧</span>contato@cashlens.com.br</li>
+              <li><span className="contact-icon">📞</span>(11) 99999-9999</li>
+              <li><span className="contact-icon">📍</span>Distrito-Federal, Brasil</li>
             </ul>
           </div>
         </div>
-        <div style={{ borderTop: '1px solid #374151', marginTop: '2rem', paddingTop: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
-          <p style={{ margin: 0 }}>© 2025 CashLens. Todos os direitos reservados.</p>
-          <div style={{ display: 'flex', gap: '1rem' }}>
+
+        {/* Footer Bottom */}
+        <div className="footer-bottom">
+          <p className="copyright">© 2025 CashLens. Todos os direitos reservados.</p>
+          <div className="legal-links">
             <a href="#">Termos</a>
             <a href="#">Privacidade</a>
             <a href="#">Cookies</a>
