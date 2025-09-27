@@ -1,6 +1,6 @@
 import { useFiltersStore, useGoalsStore } from '../../app/store.js';
 
-export default function Filter() {
+export default function Filter({ goalsEnabled = true }) {
   const month = useFiltersStore((s) => s.month);
   const setMonth = useFiltersStore((s) => s.setMonth);
   const goals = useGoalsStore((s) => s.goals);
@@ -8,26 +8,39 @@ export default function Filter() {
 
   const goalValue = goals[month] ?? '';
 
+  const handleGoalChange = (e) => {
+    const value = e.target.value;
+    setGoal(month, parseFloat(value) || 0);
+  };
+
   return (
-    <div className="controls">
-      <label>
-        Mês:
+    <div className="filter-controls">
+      <div className="control-group">
+        <label htmlFor="month-picker">Mês</label>
         <input
           type="month"
+          id="month-picker"
           value={month}
           onChange={(e) => setMonth(e.target.value)}
         />
-      </label>
-      <label>
-        Meta ({month}):
-        <input
-          type="number"
-          placeholder="0,00"
-          value={goalValue}
-          onChange={(e) => setGoal(month, e.target.value)}
-          style={{ width: 120 }}
-        />
-      </label>
+      </div>
+
+      {goalsEnabled && (
+        <div className="control-group">
+          <label htmlFor="goal-input">Meta ({month})</label>
+          <div className="input-with-prefix">
+            <span>R$</span>
+            <input
+              type="text"
+              inputMode="numeric"
+              id="goal-input"
+              placeholder="0.00"
+              value={goalValue}
+              onChange={handleGoalChange}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
