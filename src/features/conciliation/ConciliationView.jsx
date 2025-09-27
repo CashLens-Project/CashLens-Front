@@ -14,6 +14,7 @@ const ConciliationView = () => {
   const [method, setMethod] = useState("");
   const [valueTolerance, setValueTolerance] = useState(50);
   const [daysWindow, setDaysWindow] = useState(2);
+  const [manualLinks, setManualLinks] = useState([]);
 
   useEffect(() => {
     async function fetchData() {
@@ -87,6 +88,16 @@ const ConciliationView = () => {
   };
   const kpis = getKPIs();
 
+  function handleLink(saleId, payoutId) {
+    setManualLinks((prev) => [...prev, { saleId, payoutId }]);
+  }
+  function handleUnlink(saleId, payoutId) {
+    setManualLinks((prev) => prev.filter((l) => !(l.saleId === saleId && l.payoutId === payoutId)));
+  }
+  function getManualPayouts(sale) {
+    return manualLinks.filter(l => l.saleId === sale.id).map(l => payouts.find(p => p.id === l.payoutId)).filter(Boolean);
+  }
+
   return (
     <div className="conciliation-view">
       <h1>Conciliação</h1>
@@ -119,31 +130,56 @@ const ConciliationView = () => {
               <th>Total Payout</th>
               <th>Δ Valor</th>
               <th>Status</th>
+              <th>Ações</th>
             </tr>
           </thead>
           <tbody>
-            {filteredMatches.map(({sale, payouts}) => (
-              <tr key={sale.id}>
-                <td>{sale.id}</td>
-                <td>{sale.date}</td>
-                <td>R$ {sale.netRevenue.toFixed(2)}</td>
-                <td>{payouts.map(p => `${p.id} (${p.method})`).join(", ")}</td>
-                <td>R$ {payouts.reduce((sum, p) => sum + p.netValue, 0).toFixed(2)}</td>
-                <td>R$ {(payouts.reduce((sum, p) => sum + p.netValue, 0) - sale.netRevenue).toFixed(2)}</td>
-                <td>{getStatus(sale, payouts)}</td>
-              </tr>
-            ))}
-            {unmatchedSales.map(sale => (
-              <tr key={sale.id}>
-                <td>{sale.id}</td>
-                <td>{sale.date}</td>
-                <td>R$ {sale.netRevenue.toFixed(2)}</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>Sem repasse</td>
-              </tr>
-            ))}
+            {filteredMatches.map(({sale, payouts}) => {
+              const manualPayouts = getManualPayouts(sale);
+              const allPayouts = [...payouts, ...manualPayouts];
+              return (
+                <tr key={sale.id}>
+                  <td>{sale.id}</td>
+                  <td>{sale.date}</td>
+                  <td>R$ {sale.netRevenue.toFixed(2)}</td>
+                  <td>{allPayouts.map(p => `${p.id} (${p.method})`).join(", ")}</td>
+                  <td>R$ {allPayouts.reduce((sum, p) => sum + p.netValue, 0).toFixed(2)}</td>
+                  <td>R$ {(allPayouts.reduce((sum, p) => sum + p.netValue, 0) - sale.netRevenue).toFixed(2)}</td>
+                  <td>{getStatus(sale, allPayouts)}</td>
+                  <td>
+                    {unmatchedPayouts.map(p => (
+                      <button key={p.id} onClick={() => handleLink(sale.id, p.id)} style={{marginRight: 4}}>Vincular {p.id}</button>
+                    ))}
+                    {manualPayouts.map(p => (
+                      <button key={p.id} onClick={() => handleUnlink(sale.id, p.id)} style={{marginRight: 4}}>Desvincular {p.id}</button>
+                    ))}
+                  </td>
+                </tr>
+              );
+            })}
+            {unmatchedSales.map(sale => {
+              const manualPayouts = getManualPayouts(sale);
+              const allPayouts = manualPayouts;
+              return (
+                <tr key={sale.id}>
+                  <td>{sale.id}</td>
+                  <td>{sale.date}</td>
+                  <td>R$ {sale.netRevenue.toFixed(2)}</td>
+                  <td>{allPayouts.length > 0 ? allPayouts.map(p => `${p.id} (${p.method})`).join(", ") : '-'}</td>
+                  <td>{allPayouts.length > 0 ? `R$ ${allPayouts.reduce((sum, p) => sum + p.netValue, 0).toFixed(2)}` : '-'}</td>
+                  <td>{allPayouts.length > 0 ? `R$ ${(allPayouts.reduce((sum, p) => sum + p.netValue, 0) - sale.netRevenue).toFixed(2)}` : '-'}</td>
+                  <td>{allPayouts.length > 0 ? getStatus(sale, allPayouts) : 'Sem repasse'}</td>
+                  <td>
+                    {unmatchedPayouts.map(p => (
+                      <button key={p.id} onClick={() => handleLink(sale.id, p.id)} style={{marginRight: 4}}>Vincular {p.id}</button>
+                    ))}
+                    {manualPayouts.map(p => (
+                      <button key={p.id} onClick={() => handleUnlink(sale.id, p.id)} style={{marginRight: 4}}>Desvincular {p.id}</button>
+                    ))}
+                  </td>
+                </tr>
+              );
+            })}
             {filteredUnmatchedPayouts.map(payout => (
               <tr key={payout.id}>
                 <td>-</td>
@@ -153,6 +189,7 @@ const ConciliationView = () => {
                 <td>R$ {payout.netValue.toFixed(2)}</td>
                 <td>-</td>
                 <td>Repasse sem venda</td>
+                <td></td>
               </tr>
             ))}
           </tbody>
