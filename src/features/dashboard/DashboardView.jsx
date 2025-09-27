@@ -69,9 +69,13 @@ export default function DashboardView() {
   }
 
   return (
-    <div className="stack">
-      <div className="filter-container">
-        <Filter />
+    <div className='page-container'>
+      <div className="stack">
+      <div className="page-header">
+        <h1>Fluxo de Caixa</h1>
+        <div className="page-header-controls">
+          <Filter />
+        </div>
       </div>
 
       <div className="grid kpis">
@@ -119,6 +123,7 @@ export default function DashboardView() {
           </p>
         )}
       </div>
+    </div>
     </div>
   );
 }

@@ -18,12 +18,17 @@ export default function WaterfallView() {
   }, [month]);
 
   return (
-    <div className="stack">
-      <div className="filter-container">
-        <Filter goalsEnabled={false} />
-      </div>
-      <div className="panel">
-        <WaterfallChart data={waterfallData} />
+    <div className="page-container">
+      <div className="stack">
+        <div className="page-header">
+          <h1>Análise de Lucro</h1>
+          <div className="page-header-controls">
+            <Filter />
+          </div>
+        </div>
+        <div className="panel">
+          <WaterfallChart data={waterfallData} />
+        </div>
       </div>
     </div>
   );
