@@ -20,7 +20,7 @@ export default function NavBar() {
               Análise de Lucro
             </NavLink>
             <NavLink to="/conciliation" className="navlink">
-              Conciliação
+              Reconciliação
             </NavLink>
           </div>
         </div>

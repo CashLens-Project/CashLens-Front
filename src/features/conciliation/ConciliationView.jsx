@@ -91,7 +91,7 @@ const ConciliationView = () => {
     <div className="conciliation-view">
       {/* HEADER padronizado (como DRE) */}
       <div className="cv-header">
-        <h1>Conciliação de Repasses</h1>
+        <h1>Reconciliação de Repasses</h1>
         <div className="cv-header-controls">
           <Filter goalsEnabled={false} />
           <div className="field">
