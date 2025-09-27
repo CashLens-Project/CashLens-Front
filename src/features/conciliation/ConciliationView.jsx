@@ -72,6 +72,21 @@ const ConciliationView = () => {
   });
   const filteredUnmatchedPayouts = unmatchedPayouts.filter(p => !method || p.method === method);
 
+  const getKPIs = () => {
+    const totalSales = sales.length;
+    const totalMatched = matches.length;
+    const totalUnmatchedSales = unmatchedSales.length;
+    const totalUnmatchedPayouts = unmatchedPayouts.length;
+    const totalDivergente = filteredMatches.filter(({sale, payouts}) => getStatus(sale, payouts) === "Divergente").length;
+    return {
+      percentConciliado: totalSales > 0 ? ((totalMatched - totalDivergente) / totalSales * 100).toFixed(1) : "0",
+      totalSemRepasse: totalUnmatchedSales,
+      totalRepasseSemVenda: totalUnmatchedPayouts,
+      totalDivergente,
+    };
+  };
+  const kpis = getKPIs();
+
   return (
     <div className="conciliation-view">
       <h1>Conciliação</h1>
@@ -151,7 +166,18 @@ const ConciliationView = () => {
         </div>
       </div>
       <div className="conciliation-kpis">
-        {/* KPIs serão exibidos aqui */}
+        <div>
+          <strong>% Conciliado:</strong> {kpis.percentConciliado}%
+        </div>
+        <div>
+          <strong>Total sem repasse:</strong> {kpis.totalSemRepasse}
+        </div>
+        <div>
+          <strong>Repasse sem venda:</strong> {kpis.totalRepasseSemVenda}
+        </div>
+        <div>
+          <strong>Divergente:</strong> {kpis.totalDivergente}
+        </div>
       </div>
     </div>
   );
