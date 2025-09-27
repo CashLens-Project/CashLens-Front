@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { provider } from "../../data/providers";
 import { useFiltersStore } from "../../app/store";
 import Filter from "../../components/ui/Filter/Filter";
+import ConciliationTable from "../../components/charts/ConciliationTable";
 import "./ConciliationView.css";
 
 const money = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
@@ -132,77 +133,16 @@ const ConciliationView = () => {
       </div>
 
       {/* Tabela */}
-      <div className="conciliation-table">
-        <table className="cv-table">
-          <thead>
-            <tr>
-              <th>Venda</th>
-              <th>Data</th>
-              <th>Valor líquido</th>
-              <th>Repasse(s)</th>
-              <th>Total repassado</th>
-              <th>Δ Valor</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredMatches.map(({ sale, payouts }) => {
-              const totalPayout = payouts.reduce((sum, p) => sum + p.netValue, 0);
-              const delta = totalPayout - sale.netRevenue;
-              const status = getStatus(sale, payouts);
-              return (
-                <tr key={sale.id} className={status === "Conciliado" ? "row-ok" : "row-bad"}>
-                  <td className="mono">{sale.id}</td>
-                  <td>{sale.date}</td>
-                  <td>{money.format(sale.netRevenue)}</td>
-                  <td className="wrap">{payouts.map((p) => `${p.id} (${p.method})`).join(", ")}</td>
-                  <td>{money.format(totalPayout)}</td>
-                  <td className={delta === 0 ? "delta-ok" : delta > 0 ? "delta-pos" : "delta-neg"}>
-                    {money.format(delta)}
-                  </td>
-                  <td>
-                    <span className={status === "Conciliado" ? "pill pill-ok" : "pill pill-bad"}>
-                      {status}
-                    </span>
-                  </td>
-                </tr>
-              );
-            })}
-
-            {unmatchedSales.map((sale) => (
-              <tr key={sale.id} className="row-warn">
-                <td className="mono">{sale.id}</td>
-                <td>{sale.date}</td>
-                <td>{money.format(sale.netRevenue)}</td>
-                <td>—</td>
-                <td>—</td>
-                <td>—</td>
-                <td><span className="pill pill-warn">Sem repasse</span></td>
-              </tr>
-            ))}
-
-            {filteredUnmatchedPayouts.map((payout) => (
-              <tr key={payout.id} className="row-info">
-                <td>—</td>
-                <td>{payout.date}</td>
-                <td>—</td>
-                <td>{payout.id} ({payout.method})</td>
-                <td>{money.format(payout.netValue)}</td>
-                <td>—</td>
-                <td><span className="pill pill-info">Repasse sem venda</span></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        <div className="cv-foot">
-          <div><strong>Vendas carregadas:</strong> {sales.length}</div>
-          <div><strong>Repasses carregados:</strong> {payouts.length}</div>
-          <div><strong>Vendas casadas:</strong> {matches.length}</div>
-          <div><strong>Vendas sem repasse:</strong> {unmatchedSales.length}</div>
-          <div><strong>Repasses sem venda:</strong> {unmatchedPayouts.length}</div>
-        </div>
-      </div>
+      <ConciliationTable
+        filteredMatches={filteredMatches}
+        unmatchedSales={unmatchedSales}
+        filteredUnmatchedPayouts={filteredUnmatchedPayouts}
+        sales={sales}
+        payouts={payouts}
+        matches={matches}
+        money={money}
+        getStatus={getStatus}
+      />
 
       {/* Card explicativo dos status */}
       <div className="status-explain">
