@@ -1,0 +1,19 @@
+.conciliation-view {
+  padding: 2rem;
+  background: #fff;
+  min-height: 80vh;
+}
+
+.conciliation-controls {
+  margin-bottom: 1.5rem;
+}
+
+.conciliation-table {
+  margin-bottom: 2rem;
+}
+
+.conciliation-kpis {
+  display: flex;
+  gap: 2rem;
+  margin-top: 1rem;
+}
