@@ -4,6 +4,7 @@ import AppLayout from '../layouts/AppLayout.jsx';
 import DashboardView from '../features/dashboard/DashboardView.jsx';
 import DREViewEnhanced from '../features/dre/DREViewEnhanced';
 import WaterfallView from '../features/waterfall/WaterfallView';
+import ConciliationView from '../features/conciliation/ConciliationView.jsx';
 
 export const router = createBrowserRouter([
   {
@@ -29,6 +30,13 @@ export const router = createBrowserRouter([
     element: <AppLayout />,
     children: [
       { index: true, element: <WaterfallView /> },
+    ],
+  },
+  {
+    path: '/conciliation',
+    element: <AppLayout />,
+    children: [
+      { index: true, element: <ConciliationView /> },
     ],
   },
 ]);

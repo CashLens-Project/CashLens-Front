@@ -19,6 +19,9 @@ export default function NavBar() {
             <NavLink to="/waterfall" className="navlink">
               Análise de Lucro
             </NavLink>
+            <NavLink to="/conciliation" className="navlink">
+              Conciliação
+            </NavLink>
           </div>
         </div>
       </div>
