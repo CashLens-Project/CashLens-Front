@@ -142,3 +142,10 @@
   background: #f3f4f6; 
   border-color: #e5e7eb; 
 }
+
+.logo-img {
+  display: block;
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
