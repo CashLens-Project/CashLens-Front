@@ -1,5 +1,7 @@
 import "./footer.css";
 
+import logo from '../../../assets/logo.png';
+
 export default function Footer() {
   return (
     <footer className="footer" aria-labelledby="footer-heading">
@@ -9,7 +11,14 @@ export default function Footer() {
         <div className="footer__grid">
           <div className="footer__brand">
             <div className="footer__logo">
-              <span className="footer__logo-mark" aria-hidden="true">CL</span>
+              <img
+                src={logo}
+                alt="Logo CashLens"
+                width={36}
+                height={36}
+                decoding="async"
+                style={{ borderRadius: 10, objectFit: "cover" }}
+              />
               <span className="footer__logo-text">CashLens</span>
             </div>
             <p className="footer__desc">
