@@ -57,6 +57,12 @@
 .navbar-links .navlink:hover { color: var(--accent); transform: translateY(-1px); }
 .navbar-links .navlink.active { color: var(--accent); font-weight: 600; }
 
+@media (max-width: 900px) {
+  .navbar-center { display: none; }
+  .navbar-burger { display: inline-flex; order: 1; }     
+  .navbar-brand  { order: 2; }                            
+  .user-button   { order: 3; margin-left: auto; }           
+}
 
 .sidebar-overlay {
   position: fixed;
