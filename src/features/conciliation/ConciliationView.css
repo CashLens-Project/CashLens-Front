@@ -15,6 +15,13 @@
   --shadow: 0 1px 8px rgba(0, 0, 0, .06);
 }
 
+:root {
+  --filter-width: 220px;
+  --border-color: var(--border);
+  --text-primary: var(--ink);
+  --success: var(--ok);
+}
+
 .conciliation-view {
   padding: 2rem;
   background: var(--bg);
@@ -215,7 +222,7 @@
   color: #0f172a;
 }
 
-/* Select (mesmo padrão visual do mês) */
+/* Select*/
 .select-like-month {
   appearance: none;
   background-color: #f9fafb;

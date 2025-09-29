@@ -1,3 +1,10 @@
+:root {
+  --filter-width: 220px;
+  --border-color: var(--border);
+  --text-primary: var(--ink);
+  --success: var(--ok);
+}
+
 .filter-container {
   display: flex;
   justify-content: space-between;
@@ -23,6 +30,13 @@
   color: var(--muted);
 }
 
+.filter-controls .control-group,
+.cv-header-controls .field {
+  flex: 0 0 var(--filter-width);
+  min-width: var(--filter-width);
+  max-width: var(--filter-width);
+}
+
 .control-group input[type="month"],
 .input-with-prefix {
   background-color: #f9fafb;
@@ -42,6 +56,12 @@
   padding: 0 12px;
   font-size: 14px;
   color: var(--text-primary);
+}
+
+.filter-controls .control-group input[type="month"],
+.filter-controls .input-with-prefix,
+.cv-header-controls .field .select-like-month {
+  width: 100%;
 }
 
 .input-with-prefix {
