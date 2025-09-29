@@ -137,3 +137,96 @@
 @media (prefers-reduced-motion: reduce) {
   .footer__social-link { transition: none; }
 }
+
+/* Links de listas e legais: sublinhado animado com gradiente */
+.footer__list a,
+.footer__legal a {
+  position: relative;
+  isolation: isolate;
+  transition: color .25s ease, transform .2s ease;
+}
+
+.footer__list a::after,
+.footer__legal a::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: -2px;
+  width: 0%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), #60a5fa);
+  border-radius: 2px;
+  transition: width .25s ease;
+}
+
+.footer__list a:hover,
+.footer__legal a:hover {
+  color: var(--text);
+  transform: translateY(-1px);
+}
+
+.footer__list a:hover::after,
+.footer__legal a:hover::after {
+  width: 100%;
+}
+
+/* Botões sociais: brilho suave + "shine sweep" diagonal */
+.footer__social-link {
+  position: relative;
+  overflow: hidden;
+  will-change: transform, box-shadow;
+}
+
+.footer__social-link::after {
+  content: "";
+  position: absolute;
+  top: 0; left: -130%;
+  width: 120%; height: 100%;
+  transform: skewX(-20deg);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent);
+  transition: left .55s ease;
+  pointer-events: none;
+}
+
+.footer__social-link:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 10px 28px rgba(34,211,238,0.10);
+  border-color: #334155; /* slate-700 */
+  color: var(--text);
+}
+
+.footer__social-link:hover::after {
+  left: 130%;
+}
+
+/* Marca: leve tilt e realce no badge ao passar o mouse */
+.footer__logo-mark {
+  transition: transform .25s ease, box-shadow .25s ease, background-position 1.2s ease;
+  background-size: 200% 200%;
+}
+
+.footer__logo:hover .footer__logo-mark {
+  transform: rotate(5deg) scale(1.04);
+  box-shadow: 0 8px 24px rgba(34,211,238,0.18);
+  background-position: 100% 0%;
+}
+
+/* Acessibilidade: foco bem visível no teclado */
+.footer a:focus-visible,
+.footer__social-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 10px;
+}
+
+/* Respeita preferência do usuário: menos movimento */
+@media (prefers-reduced-motion: reduce) {
+  .footer__list a,
+  .footer__legal a,
+  .footer__social-link,
+  .footer__logo-mark {
+    transition: none !important;
+  }
+  .footer__social-link:hover {
+    transform: none; box-shadow: none;
+  }
+}
