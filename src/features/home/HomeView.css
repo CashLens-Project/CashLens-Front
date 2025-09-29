@@ -218,3 +218,232 @@
   background: #f5f3ff;
   color: #8b5cf6;
 }
+
+/* ============================
+   ANIMAÇÕES PREMIUM (ADICIONE AO FINAL)
+   ============================ */
+
+/* -------- Entrada suave (fallback) -------- */
+.hero-content .hero-text h1,
+.hero-content .hero-text p,
+.button-group a,
+.section-title,
+.section-subtitle,
+.feature-card,
+.how-steps-box,
+.how-step,
+.hero-image img,
+.section .grid img {
+  opacity: 0;
+  transform: translateY(12px);
+  animation: cl-fade-up .7s ease forwards;
+}
+
+.hero-content .hero-text h1 { animation-delay: .05s; }
+.hero-content .hero-text p { animation-delay: .15s; }
+.button-group a:nth-child(1) { animation-delay: .25s; }
+.button-group a:nth-child(2) { animation-delay: .35s; }
+
+.section-title { animation-delay: .05s; }
+.section-subtitle { animation-delay: .15s; }
+
+/* Stagger para features */
+.feature-card:nth-child(1) { animation-delay: .05s; }
+.feature-card:nth-child(2) { animation-delay: .10s; }
+.feature-card:nth-child(3) { animation-delay: .15s; }
+.feature-card:nth-child(4) { animation-delay: .20s; }
+.feature-card:nth-child(5) { animation-delay: .25s; }
+.feature-card:nth-child(6) { animation-delay: .30s; }
+
+/* Stagger para steps */
+.how-step:nth-child(1) { animation-delay: .05s; }
+.how-step:nth-child(2) { animation-delay: .15s; }
+.how-step:nth-child(3) { animation-delay: .25s; }
+
+/* Imagens */
+.hero-image img { animation-delay: .25s; }
+.section .grid img { animation-delay: .1s; }
+
+/* -------- Microinterações (hover) -------- */
+
+/* Botões (se existirem .button-primary/.button-secondary) */
+.button-group a {
+  position: relative;
+  overflow: hidden;
+  transform: translateZ(0);
+  transition: transform .18s ease, box-shadow .25s ease, filter .2s ease;
+}
+.button-group a::after {
+  content: "";
+  position: absolute; top: 0; left: -120%;
+  width: 120%; height: 100%;
+  transform: skewX(-18deg);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent);
+  transition: left .48s ease;
+  pointer-events: none;
+}
+.button-group a:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(2,6,23,.10);
+  filter: brightness(1.02);
+}
+.button-group a:hover::after { left: 120%; }
+
+/* Cards de feature – lift + luz suave */
+.feature-card {
+  will-change: transform, box-shadow;
+  transition: transform .22s ease, box-shadow .28s ease, background .22s ease, border-color .22s ease;
+}
+.feature-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 32px rgba(2,6,23,.08);
+  background: #ffffff;
+}
+
+/* Ícones – pulso/tilt discreto */
+.feature-icon {
+  transition: transform .25s ease, filter .25s ease;
+  will-change: transform;
+}
+.feature-card:hover .feature-icon {
+  transform: scale(1.06) rotate(-2deg);
+  filter: drop-shadow(0 6px 14px rgba(2,6,23,.10));
+}
+
+/* Box de passos – “sheen” de destaque (sem mexer no layout) */
+.how-steps-box {
+  position: relative;
+}
+.how-steps-box::after {
+  content: "";
+  position: absolute; inset: -2px;
+  border-radius: 24px;
+  pointer-events: none;
+  background:
+    conic-gradient(from 180deg at 50% 50%, rgba(2,6,23,.06), rgba(2,6,23,0) 35%, rgba(2,6,23,.06));
+  -webkit-mask: 
+    linear-gradient(#000 0 0) content-box, 
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  opacity: 0; transform: scale(.995);
+  transition: opacity .3s ease, transform .3s ease;
+}
+.how-steps-box:hover::after {
+  opacity: 1; transform: scale(1);
+}
+
+/* Cards de passo – hover premium */
+.how-step {
+  transition: transform .22s ease, box-shadow .28s ease, background .22s ease, border-color .22s ease;
+  will-change: transform;
+}
+.how-step:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 28px rgba(2,6,23,.08);
+  background: #ffffff;
+}
+
+/* Step circle – pulso */
+.step-circle {
+  position: relative;
+}
+.step-circle::after {
+  content: "";
+  position: absolute; inset: -2px;
+  border-radius: 999px;
+  box-shadow: 0 0 0 0 rgba(2,6,23,.12);
+  animation: cl-pulse 1.8s ease-out infinite;
+}
+
+/* Títulos – sublinhado elegante no hover */
+.section-title {
+  position: relative;
+}
+.section-title::after {
+  content: "";
+  position: absolute;
+  left: 50%; bottom: -10px;
+  width: 0; height: 3px;
+  transform: translateX(-50%);
+  border-radius: 2px;
+  background: currentColor;
+  opacity: .75;
+  transition: width .28s ease;
+}
+.section-title:hover::after { width: 96px; }
+
+/* Imagens – flutuação leve */
+.hero-image img,
+.section .grid img {
+  will-change: transform;
+  animation: cl-float 6s ease-in-out .5s infinite;
+}
+
+/* -------- Scroll-driven (quando suportado) -------- */
+@supports (animation-timeline: view()) {
+  .section .section-title,
+  .section .section-subtitle,
+  .section .feature-card,
+  .section .how-step {
+    opacity: 0;
+    transform: translateY(12px);
+    animation: cl-reveal both linear;
+    animation-timeline: view();
+    animation-range: entry 10% cover 28%;
+  }
+
+  .hero-image img,
+  .section .grid img {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+    animation: cl-reveal-img both linear;
+    animation-timeline: view();
+    animation-range: entry 8% cover 30%;
+  }
+}
+
+/* -------- Keyframes -------- */
+@keyframes cl-fade-up { to { opacity: 1; transform: translateY(0); } }
+@keyframes cl-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(2,6,23,.12); }
+  70%  { box-shadow: 0 0 0 12px rgba(2,6,23,0); }
+  100% { box-shadow: 0 0 0 0 rgba(2,6,23,0); }
+}
+@keyframes cl-float {
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-6px); }
+}
+@keyframes cl-reveal {
+  0%   { opacity: 0; transform: translateY(14px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes cl-reveal-img {
+  0%   { opacity: 0; transform: translateY(14px) scale(0.985); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* -------- Acessibilidade -------- */
+@media (prefers-reduced-motion: reduce) {
+  .hero-content .hero-text h1,
+  .hero-content .hero-text p,
+  .button-group a,
+  .section-title,
+  .section-subtitle,
+  .feature-card,
+  .how-steps-box,
+  .how-step,
+  .hero-image img,
+  .section .grid img {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .button-group a,
+  .feature-card,
+  .feature-icon,
+  .how-step,
+  .step-circle {
+    transition: none !important;
+  }
+}
