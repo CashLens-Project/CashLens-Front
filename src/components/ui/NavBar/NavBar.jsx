@@ -3,26 +3,7 @@ import { NavLink } from "react-router-dom";
 import { FiMenu, FiX, FiUser } from "react-icons/fi";
 import "./NavBar.css";
 
-function LogoMark() {
-  return (
-    <svg width="28" height="28" viewBox="0 0 48 48" aria-hidden="true">
-      <defs>
-        <linearGradient id="clg" x1="0" x2="1" y1="0" y2="1">
-          <stop offset="0%" stopColor="var(--accent)" />
-          <stop offset="100%" stopColor="var(--text)" />
-        </linearGradient>
-      </defs>
-      <rect rx="10" width="48" height="48" fill="url(#clg)" />
-      <path
-        d="M14 30c4 4 10 4 14 0l6 6M18 18c2.5-2.5 6.5-2.5 9 0"
-        stroke="white"
-        strokeWidth="3"
-        fill="none"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
+import logo from '../../../assets/logo.png';
 
 export default function NavBar() {
   const [openSidebar, setOpenSidebar] = useState(false);
@@ -49,14 +30,21 @@ export default function NavBar() {
         <div className="navbar-inner">
           {/* Brand */}
           <div className="navbar-brand">
-            <LogoMark />
+            <img
+              src={logo}
+              alt="CashLens"
+              className="logo-img"
+              width={28}
+              height={28}
+              decoding="async"
+            />
             <span className="site-name">CashLens</span>
           </div>
 
           {/* Centro (desktop) */}
           <div className="navbar-center">
             <div className="navbar-links">
-              <NavLink to="/" end="true" className="navlink">Home</NavLink>
+              <NavLink to="/" end className="navlink">Home</NavLink>
               <NavLink to="/dashboard" className="navlink">Fluxo de Caixa</NavLink>
               <NavLink to="/dre" className="navlink">Resumo Financeiro</NavLink>
               <NavLink to="/waterfall" className="navlink">Análise de Lucro</NavLink>
@@ -93,7 +81,14 @@ export default function NavBar() {
       >
         <div className="sidebar-header">
           <div className="navbar-brand">
-            <LogoMark />
+            <img
+              src={logo}
+              alt="CashLens"
+              className="logo-img"
+              width={28}
+              height={28}
+              decoding="async"
+            />
             <span className="site-name">CashLens</span>
           </div>
           <button
@@ -108,7 +103,7 @@ export default function NavBar() {
         <nav className="sidebar-links">
           <NavLink 
             to="/" 
-            end="true" 
+            end 
             className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`}
             onClick={() => setOpenSidebar(false)}>Home</NavLink>
           <NavLink 
