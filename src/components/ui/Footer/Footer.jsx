@@ -1,6 +1,7 @@
 import "./footer.css";
 
 import logo from '../../../assets/logo.png';
+import { FiTwitter, FiInstagram, FiLinkedin, FiFacebook } from "react-icons/fi";
 
 export default function Footer() {
   return (
@@ -25,9 +26,22 @@ export default function Footer() {
               Análise financeira inteligente para negócios de todos os tamanhos.
             </p>
             <nav className="footer__social" aria-label="Redes sociais">
-              <a href="#" aria-label="Twitter" className="footer__social-link">Twitter</a>
-              <a href="#" aria-label="LinkedIn" className="footer__social-link">LinkedIn</a>
-              <a href="#" aria-label="Facebook" className="footer__social-link">Facebook</a>
+              <a href="#" aria-label="Twitter" className="footer__social-link" target="_blank" rel="noreferrer">
+                <FiTwitter size={18} aria-hidden="true" />
+                <span className="sr-only">Twitter</span>
+              </a>
+              <a href="#" aria-label="Instagram" className="footer__social-link" target="_blank" rel="noreferrer">
+                <FiInstagram size={18} aria-hidden="true" />
+                <span className="sr-only">Instagram</span>
+              </a>
+              <a href="#" aria-label="LinkedIn" className="footer__social-link" target="_blank" rel="noreferrer">
+                <FiLinkedin size={18} aria-hidden="true" />
+                <span className="sr-only">LinkedIn</span>
+              </a>
+              <a href="#" aria-label="Facebook" className="footer__social-link" target="_blank" rel="noreferrer">
+                <FiFacebook size={18} aria-hidden="true" />
+                <span className="sr-only">Facebook</span>
+              </a>
             </nav>
           </div>
 
