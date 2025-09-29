@@ -6,12 +6,12 @@
 
 Preencha com os quatro membros do grupo:
 
-| Integrante |  | Função no projeto         |
-| ---------- | ------ | ------------------------- |
-| *João Marcos Azevedo Cruz* | | Líder / Coordenação       |
-| *Marcos André Barros Meneses* | | Líder / Coordenação                |
-| *João Pedro Tavares Teixeira* | | Dev |
-| *João Victor Martins Albernaz* | | Dev  |
+| Integrante                     | Função no projeto   |
+| ------------------------------ | ------------------- |
+| *João Marcos Azevedo Cruz*     | Líder / Coordenação |
+| *Marcos André Barros Meneses*  | Líder / Coordenação |
+| *João Pedro Tavares Teixeira*  | Dev                 |
+| *João Victor Martins Albernaz* | Dev                 |
 
 ## Visão Geral
 
