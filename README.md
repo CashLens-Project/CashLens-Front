@@ -84,6 +84,9 @@ src/
 Pré-requisitos: **Node 18+** e **npm**.
 
 ```bash
+# clonar repositório
+git clone https://github.com/CashLens-Project/CashLens-Front.git
+
 # instalar dependências
 npm install
 
