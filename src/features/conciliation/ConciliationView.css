@@ -398,3 +398,26 @@
     background: var(--info-bg);
   }
 }
+
+.cv-header-controls {
+  display: flex;
+  align-items: flex-end;
+  gap: 24px;
+  margin-left: auto;
+  width: auto;
+  flex-wrap: nowrap; 
+}
+
+.cv-header-controls .field {
+  flex: 0 0 var(--filter-width);
+  min-width: var(--filter-width);
+  max-width: var(--filter-width);
+}
+.cv-header-controls .field .select-like-month { width: 100%; }
+
+@media (max-width: 900px) {
+  .cv-header-controls {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+}
