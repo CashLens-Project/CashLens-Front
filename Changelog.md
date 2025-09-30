@@ -1,77 +1,77 @@
 # Changelog
 
-Todas as mudanças notáveis deste projeto serão registradas aqui. O formato segue uma adaptação do **Keep a Changelog**, e versões seguem **Semantic Versioning**.
+Todas as mudanças notáveis deste repositório serão documentadas aqui.  
+O formato segue o padrão **Keep a Changelog**.
+
+Cada seção abaixo corresponde a uma **tag** (`vX.Y.Z`) no Git.
 
 ---
 
-## [1.2.1]
-
-### Changed
-
-* Ajustes finais na **Home**.
-* Melhoria de responsividade no **Footer** e nos componentes de **filtros** (metas, filtro por mês e medidas).
-
-### Docs
-
-* Criação do **README.md** com a documentação do projeto.
-
----
-
-## [1.2.0]
-
+## [v1.2.1]
 ### Added
-
-* Nova tela de **Reconciliação**.
+- `README.md` com documentação do projeto.
 
 ### Changed
-
-* **Padronização visual** de todas as telas.
-* Refatorações para um código **mais modular e limpo**.
-* **Melhorias de responsividade** e de estilo nas páginas.
-* Tela de **DRE** ajustada para usar a **mesma base de dados local**.
-* **Footer** e **Navbar** completamente refatorados para melhor estilo e responsividade.
+- Melhorias finais na **Home**.
+- Ajustes de **responsividade** no **Footer** e no componente de **Filtros** (metas, seleção de mês e medidas).
 
 ---
 
-## [1.1.1]
+## [v1.2.0]
+### Added
+- **Tela de Reconciliação** (matching de vendas x repasses, filtros por método, KPIs).
+- Base de estilos padronizada para todas as páginas.
 
+### Changed
+- Código mais **modular** e **limpo** (refinos em `features/`, `components/` e `utils/`).
+- **Responsividade** e **estilo** aprimorados em todas as páginas.
+- **DRE** ajustada para consumir a **mesma base de dados local** do provider.
+- **Footer** e **Navbar** **completamente refatorados** (estilo e responsividade melhores).
+
+---
+
+## [v1.1.1]
 ### Fixed
-
-* Correção de dependências: adicionado **react-icons** no `package.json` (quebrava build/execução em versões anteriores).
+- **Dependência ausente** adicionada: `react-icons` no `package.json`.
 
 ---
 
-## [1.1.0]
-
+## [v1.1.0]
 ### Added
-
-* Nova tela **Waterfall**.
-* Componente global de **Footer**.
+- **Tela Waterfall** (análise de lucro em cascata).
+- **Footer** global como componente reutilizável.
 
 ### Changed
-
-* **Tema**: migração do tema **escuro** para **claro**.
-* **Home** totalmente **refatorada**.
-* Limpeza de código com **CSS dedicado** por componente/view.
-* Melhorias significativas na tela de **TimeLine de Lucro**.
-
----
-
-## [1.0.0]
-
-### Added
-
-* Primeira versão organizada do projeto.
-* Estruturação de **módulos**: `utils/`, `components/`, `features/`, `app/`, `providerLocal/` etc.
-* Organização das **rotas** da aplicação.
-* Telas: **Home**, **TimeLine de Lucro (base)**, **DRE (base)**.
-* **Menu** base.
+- Migração do tema **escuro → claro**.
+- **Limpeza de código**: CSS dedicado por **view/componente**.
+- **Home** completamente **refatorada**.
+- Melhorias significativas na **Timeline de Lucro** (UI/UX e gráficos).
 
 ---
 
-## [0.1.0-alpha.0]
-
+## [v1.0.0]
 ### Added
+- Primeira versão **estruturada** para organização do time.
+- Separação de módulos: `utils/`, `components/`, `features/`, `app/`, `providerLocal/`.
+- **Organização de rotas**.
+- **Tela Home**.
+- **Timeline de Lucro (base)**.
+- **Tela de DRE (base)**.
+- **Menu (base)**.
 
-* **Initial scaffold** do projeto com **React + Vite**.
-* Configurações iniciais e primeiras **dependências**.
+---
+
+## [v0.1.0-alpha.0]
+### Added
+- **Scaffold inicial** do projeto.
+- Configuração de **React + Vite** e dependências básicas.
+
+---
+
+## Manutenção do CHANGELOG por Tags
+
+- O arquivo **`CHANGELOG.md`** será atualizado a cada **tag** criada:
+  - **Tags**: `vX.Y.Z` (ex.: `v1.0.0`, `v1.1.0`, `v1.1.1`).
+  - **Seções** por versão: `Added`, `Changed`, `Fixed`, `Removed`, `Deprecated`, `Security` (quando aplicável).
+
+---
